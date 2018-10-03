@@ -52,7 +52,7 @@ public class trackBuilder {
                 
             }catch(Exception e){
                 e.printStackTrace();
-                System.out.println("fucky wucky UwU");
+                System.out.println("File not found, creating now");
                 File f = new File(filename);
                 f.createNewFile();
                 FileReader fr = new FileReader(filename);
