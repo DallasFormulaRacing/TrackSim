@@ -28,14 +28,14 @@ public class trackElement {
      * @param y1 ending y pos
      */
     public trackElement(trackElementType t, double x0, double y0, double x1, double y1) {
-            this.x0 = x0;
-            this.y0 = y0;
-            this.x1 = x1;
-            this.y1 = y1;
-            this.type = t;
-            
-            this.angle = Math.toDegrees(Math.atan((y1-y0)/(x1-x0)));
-            this.radius = -1;
+        this.x0 = x0;
+        this.y0 = y0;
+        this.x1 = x1;
+        this.y1 = y1;
+        this.type = t;
+
+        this.angle = Math.toDegrees(Math.atan((y1 - y0) / (x1 - x0)));
+        this.radius = -1;
     }
 
     /**
@@ -49,9 +49,11 @@ public class trackElement {
      * @param radius
      */
     public trackElement(trackElementType t, double x0, double y0, double theta0, double theta1, double radius) {
-        this.x0 = x0;
-        this.y0 = y0;
-        Arc2D arc = new Arc2D.Double(x0 + radius, y0 + radius, radius, radius, theta0, theta1, OPEN);
+
+        Arc2D arc = new Arc2D.Double();
+        arc.setArcByCenter(x0, y0, radius, theta0, theta1, OPEN);
+        this.x0 = arc.getStartPoint().getX();
+        this.y0 = arc.getStartPoint().getY();
         this.x1 = arc.getEndPoint().getX();
         this.y1 = arc.getEndPoint().getY();
         this.type = t;
@@ -80,8 +82,8 @@ public class trackElement {
     public double getY1() {
         return y1;
     }
-    
-    public double getTheta(){
+
+    public double getTheta() {
         return angle;
     }
 

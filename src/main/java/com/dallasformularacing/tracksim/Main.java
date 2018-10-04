@@ -29,10 +29,10 @@ class Main {
         
         
         trackBuilder t = new trackBuilder(filename);
-        //t.addElement(new trackElement(STRAIGHT,0,0,0,10));
-        //t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastTheta(),45, 100));
-       t.addElement(new trackElement(CURVE, 0, 0, 0, -45, 10));
        
+       t.addElement(new trackElement(CURVE, 0, 0, 0, -45, 10));
+       //t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastX(), t.getLastTheta(), -45, 10));
+      
         t.close();
         
     }
