@@ -16,7 +16,7 @@ import static java.awt.geom.Arc2D.OPEN;
 public class trackElement {
 
     private trackElementType type;
-    private double x0, y0, x1, y1, angle, radius;
+    private double x0, y0, x1, y1, theta0, theta1, radius;
 
     /**
      * This constructor is for straight elements only
@@ -28,13 +28,14 @@ public class trackElement {
      * @param y1 ending y pos
      */
     public trackElement(trackElementType t, double x0, double y0, double x1, double y1) {
+        //TODO this function needs work
         this.x0 = x0;
         this.y0 = y0;
         this.x1 = x1;
         this.y1 = y1;
         this.type = t;
-
-        this.angle = Math.toDegrees(Math.atan((y1 - y0) / (x1 - x0)));
+        
+        this.theta1 = Math.toDegrees(Math.atan((y1 - y0) / (x1 - x0)));
         this.radius = -1;
     }
 
@@ -51,22 +52,25 @@ public class trackElement {
     public trackElement(trackElementType t, double x0, double y0, double theta0, double theta1, double radius) {
 
         Arc2D arc = new Arc2D.Double();
-        arc.setArcByCenter(x0, y0, radius, theta0, theta1, OPEN);
+        arc.setArc(x0, y0 - radius, radius, radius , theta0, theta1, OPEN);
+
         this.x0 = arc.getStartPoint().getX();
         this.y0 = arc.getStartPoint().getY();
         this.x1 = arc.getEndPoint().getX();
         this.y1 = arc.getEndPoint().getY();
         this.type = t;
-        this.angle = arc.getAngleExtent();
+        this.theta0 = theta0;
+        this.theta1 = arc.getAngleExtent();
         this.radius = radius;
     }
 
     public String[] getData() {
 
-        String[] s = {type.toString(), Double.toString(x0), Double.toString(y0), Double.toString(x1), Double.toString(y1), Double.toString(angle), Double.toString(radius)};
+        String[] s = {type.toString(), Double.toString(x0), Double.toString(y0), Double.toString(x1), Double.toString(y1), Double.toString(theta1), Double.toString(radius)};
         return s;
     }
 
+    
     public double getX0() {
         return x0;
     }
@@ -83,8 +87,19 @@ public class trackElement {
         return y1;
     }
 
-    public double getTheta() {
-        return angle;
+    public double getTheta1() {
+        return theta1;
     }
-
+    
+    public double getTheta0() {
+        return theta0;
+    }
+    
+     public trackElementType getType() {
+        return type;
+    }
+     
+     public double getRadius() {
+        return radius;
+    }
 }

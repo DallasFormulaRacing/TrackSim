@@ -16,8 +16,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +27,7 @@ import java.util.logging.Logger;
  *
  * @author Josh
  */
+
 public class trackBuilder {
 
     private LinkedList<trackElement> elements = new LinkedList();
@@ -71,6 +74,9 @@ public class trackBuilder {
         csvw.writeNext(e.getData());
     }
     
+    public trackElement getLastElement(){
+        return elements.getLast();
+    }
     
     public void addFromPrevious(){
         /*
@@ -90,7 +96,7 @@ public class trackBuilder {
     }
     
     public double getLastTheta(){
-        return elements.getLast().getTheta();
+        return elements.getLast().getTheta1();
     }
 
     public void close() {
@@ -109,5 +115,10 @@ public class trackBuilder {
         }
         return false;
     }
+
+    public LinkedList<trackElement> getAllElements(){
+        return elements;
+    }
+    
 
 }
