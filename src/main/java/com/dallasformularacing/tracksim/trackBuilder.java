@@ -38,10 +38,12 @@ public class trackBuilder {
      * 
      * @param filename filename of csv file of track. Creates it if not exists
      */
+    
+    //constructor
     public trackBuilder(String filename) {
 
         //our key for the data elements in the csv file
-        String[] CSVHeader = {"type", "x0", "y0", "x1", "y1", "angle", "radius"};
+        String[] CSVHeader = {"type", "x0", "y0", "x1", "y1", "angle0", "angle", "radius"};
         String[] s;
         try {
             try{
