@@ -34,8 +34,9 @@ class Main {
         
         trackBuilder t = new trackBuilder(filename);
        
-       t.addElement(new trackElement(CURVE, 0, 0, 180, -90, 100));
-       t.addElement(new trackElement(STRAIGHT, t.getLastX(), t.getLastY(), t.getLastX() + 100, t.getLastY()));
+       t.addElement(new trackElement(CURVE, 0, 0, 0, -45, 100));
+       t.addElement(new trackElement(STRAIGHT, t.getLastX(), t.getLastY(), 100, t.getLastTheta()));
+       t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastTheta(), -45, 100));
       
       
         t.close();

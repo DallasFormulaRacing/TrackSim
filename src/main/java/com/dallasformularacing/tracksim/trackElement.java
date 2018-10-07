@@ -27,15 +27,14 @@ public class trackElement {
      * @param x1 ending x pos
      * @param y1 ending y pos
      */
-    public trackElement(trackElementType t, double x0, double y0, double x1, double y1) {
+    public trackElement(trackElementType t, double x0, double y0, double length, double theta) {
         //TODO this function needs work
         this.x0 = x0;
-        this.y0 = y0;
-        this.x1 = x1;
-        this.y1 = y1;
-        this.type = t;
-        
-        this.theta1 = Math.toDegrees(Math.atan((y1 - y0) / (x1 - x0)));
+        this.y0 = y0; 
+        this.type = t; 
+        this.x1 = x0 + (length * Math.sin(Math.toRadians(-theta)));
+        this.y1 = y0 - (length * Math.cos(Math.toRadians(-theta)));
+        this.theta1 = -theta;
         this.radius = -1;
     }
 
@@ -52,21 +51,22 @@ public class trackElement {
     public trackElement(trackElementType t, double x0, double y0, double theta0, double theta1, double radius) {
 
         Arc2D arc = new Arc2D.Double();
-        arc.setArc(x0, y0 - radius, radius, radius , theta0, theta1, OPEN);
+        arc.setArc(x0, y0 - radius, radius * 2, radius * 2 , 180 - theta0, theta1, OPEN);
 
         this.x0 = arc.getStartPoint().getX();
-        this.y0 = arc.getStartPoint().getY();
+        this.y0 = Math.round(arc.getStartPoint().getY());
         this.x1 = arc.getEndPoint().getX();
         this.y1 = arc.getEndPoint().getY();
         this.type = t;
-        this.theta0 = theta0;
+        this.theta0 = 180 - theta0;
         this.theta1 = arc.getAngleExtent();
         this.radius = radius;
     }
 
     public String[] getData() {
 
-        String[] s = {type.toString(), Double.toString(x0), Double.toString(y0), Double.toString(x1), Double.toString(y1), Double.toString(theta1), Double.toString(radius)};
+        String[] s = {type.toString(), Double.toString(x0), Double.toString(y0), Double.toString(x1), Double.toString(y1), Double.toString(theta0), 
+                        Double.toString(theta1), Double.toString(radius)};
         return s;
     }
 
