@@ -51,10 +51,15 @@ public class mainPanel extends JPanel {
         g2.drawLine(0,-5,0,5);
         
         for(trackElement t: elements){
+            
           if(t.getType() == CURVE){  
-              g2.draw(new Arc2D.Double(t.getX0(), t.getY0() - t.getRadius(), t.getRadius() * 2, t.getRadius() * 2, t.getTheta0(), t.getTheta1(), PIE));
+              
+              g2.draw(new Arc2D.Double(t.getX0(), t.getY0() - t.getRadius(), t.getRadius() * 2, t.getRadius() * 2, t.getEntryTheta(), -t.getdTheta(), PIE));
+              
           }else if(t.getType() == STRAIGHT){
+              
               g2.draw(new Line2D.Double(t.getX0(), t.getY0(), t.getX1(), t.getY1()));
+              
           }
         }
     }

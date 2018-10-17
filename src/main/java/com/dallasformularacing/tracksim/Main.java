@@ -18,48 +18,39 @@ import java.io.Reader;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-//test change'
 
 /**
  *
  * @author Josh
  */
 class Main {
-    
+
     private static String filename = "test.csv";
 
-   
     public static void main(String[] args) {
-        
-        
+
         trackBuilder t = new trackBuilder(filename);
-       
-       t.addElement(new trackElement(CURVE, 0, 0, 0, -45, 100));
-       t.addElement(new trackElement(STRAIGHT, t.getLastX(), t.getLastY(), 100, t.getLastTheta()));
-       t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastTheta(), -45, 100));
-      
-      
+
+       // t.addElement(new trackElement(CURVE, 0, 0, 180, 45, 100));
+       // t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 45, 100));
+       t.addElement(new trackElement(CURVE, 0, 0, 180, 30, 100));
+       t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 30, 100));
+    t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 65, 100));
         t.close();
-        
+
         mainPanel p = new mainPanel();
-        
-        for(trackElement e : t.getAllElements()){
+
+        for (trackElement e : t.getAllElements()) {
             p.addElement(e);
         }
-       
-        
+
         JFrame frame = new JFrame("Draw Arc Demo");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.add(p);
         frame.pack();
-        frame.setSize(new Dimension(420, 420));
+        frame.setSize(new Dimension(420, 420)); //nice
         frame.setVisible(true);
-      
-        
+
     }
-    
-    
-    
-    
-    
+
 }
