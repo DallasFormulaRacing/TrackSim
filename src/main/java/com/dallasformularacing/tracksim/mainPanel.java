@@ -42,8 +42,12 @@ public class mainPanel extends JPanel {
             }
         });
     }
+    
     @Override
     public void paint(Graphics g){
+        
+        super.paint(g);
+        
         Graphics2D g2 = (Graphics2D) g;
         g2.translate(super.getWidth()/2, super.getHeight()/2);
         
@@ -54,7 +58,7 @@ public class mainPanel extends JPanel {
             
           if(t.getType() == CURVE){  
               
-              g2.draw(new Arc2D.Double(t.getX0(), t.getY0() - t.getRadius(), t.getRadius() * 2, t.getRadius() * 2, t.getEntryTheta(), -t.getdTheta(), PIE));
+              g2.draw(new Arc2D.Double(t.getX0() - t.getdx(), t.getY0() - t.getRadius() + t.getdy(), t.getRadius() * 2, t.getRadius() * 2, t.getEntryTheta(), -t.getdTheta(), PIE));
               
           }else if(t.getType() == STRAIGHT){
               
