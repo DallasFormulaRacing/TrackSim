@@ -27,7 +27,13 @@ public class mainPanel extends JPanel {
     
     private LinkedList<trackElement> elements = new LinkedList();
     
+    /**
+     * Constructor
+     * 
+     */
     public mainPanel(){
+        
+        //Add a mouse listener to this panel. This does nothing yet
         this.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -43,17 +49,28 @@ public class mainPanel extends JPanel {
         });
     }
     
+    
+    /**
+     * Paint method override for this panel
+     * @param g 
+     */
     @Override
     public void paint(Graphics g){
         
         super.paint(g);
         
         Graphics2D g2 = (Graphics2D) g;
+        
+        //set (0,0) to the middle of the panel
         g2.translate(super.getWidth()/2, super.getHeight()/2);
         
+        //draw some axis lines
+        //TODO: draw better axis lines
         g2.drawLine(-5, 0, 5, 0);
         g2.drawLine(0,-5,0,5);
         
+        //Draw all of our track elements
+        //TODO: this is sort of broken
         for(trackElement t: elements){
             
           if(t.getType() == CURVE){  
@@ -68,6 +85,7 @@ public class mainPanel extends JPanel {
         }
     }
     
+    //Add an element to be drawn
     public void addElement(trackElement t){
         elements.add(t);
     }
