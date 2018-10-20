@@ -17,4 +17,5 @@ medium priority goals
 low priority goals
 -----
 -make a nice gui with resizing and panning around the map 
+
 -read in a CSV file of GPS coordinates and generate a map based on that
