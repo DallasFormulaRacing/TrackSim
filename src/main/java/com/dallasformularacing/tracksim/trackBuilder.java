@@ -24,7 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Class for building a CSV file representing a track made of track elements
  * @author Josh
  */
 
@@ -35,20 +35,19 @@ public class trackBuilder {
     private CSVWriter csvw;
 
     /**
-     * 
+     * Constructor
      * @param filename filename of csv file of track. Creates it if not exists
      */
-    
-    //constructor
     public trackBuilder(String filename) {
 
         //our key for the data elements in the csv file
         String[] CSVHeader = {"type", "x0", "y0", "x1", "y1", "entryTheta", "dTheta" , "exitTheta","radius"};
-        String[] s;
+       
         try {
             try{
                 //try to obtain the path of the given filename
                 //if exception throw, file does not exist
+                //also initializes I/O
                 Path p = Paths.get(filename);   
                 FileReader fr = new FileReader(p.toFile());
                 FileWriter fw = new FileWriter(p.toFile(), true);
@@ -56,6 +55,7 @@ public class trackBuilder {
                 csvw = new CSVWriter(fw);
                 
             }catch(Exception e){
+                //Create file, initialize I/O, write the header to the file
                 e.printStackTrace();
                 System.out.println("File not found, creating now");
                 File f = new File(filename);
@@ -71,24 +71,26 @@ public class trackBuilder {
         }
     }
 
+    //add element and write it to file
     public void addElement(trackElement e) {
         elements.add(e);
         csvw.writeNext(e.getData());
     }
     
+    //TODO: make this function work
+    public boolean isTrackComplete() {
+        //if the endpoints of the last element equal the start points of the first element
+        if ((elements.getLast().getX1() == elements.getFirst().getX0()) && (elements.getLast().getY1() == elements.getFirst().getY0())) {
+            return true;
+        }
+        return false;
+    }
+    
+    //bunch of getter functions
     public trackElement getLastElement(){
         return elements.getLast();
     }
-    
-    public void addFromPrevious(){
-        /*
-        TODO this function should add a new tackElement based on the previous element
-        if next element is a curve, no restriction on direction
-        if next element is a straight, it should be coming out of the curve at the exit angle of the curve (?)
-        exit angle is given by 90-theta (???)
-        */
-    }
-
+   
     public double getLastX() {
         return elements.getLast().getX1();
     }
@@ -105,7 +107,12 @@ public class trackBuilder {
         return elements.getLast().getExitTheta();
     }
     
+    public LinkedList<trackElement> getAllElements(){
+        return elements;
+    }
+    
 
+    //close the file I/O
     public void close() {
         try {
             csvr.close();
@@ -115,17 +122,7 @@ public class trackBuilder {
         }
     }
 
-    public boolean isTrackComplete() {
-        //if the endpoints of the last element equal the start points of the first element
-        if ((elements.getLast().getX1() == elements.getFirst().getX0()) && (elements.getLast().getY1() == elements.getFirst().getY0())) {
-            return true;
-        }
-        return false;
-    }
-
-    public LinkedList<trackElement> getAllElements(){
-        return elements;
-    }
+    
     
 
 }

@@ -30,20 +30,26 @@ class Main {
 
         trackBuilder t = new trackBuilder(filename);
 
+        //This is the structure for creating track elements
+        //why does the initial angle start at 180*, you may ask yourself
+        //it just be like that
         t.addElement(new trackElement(CURVE, 0, 0, 180, 45, 100));
         t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 30, 100));
         t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 45, 100));
         t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 60, 100));
         t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 180, 100));
         
+        //close I/O when we're done adding elements
         t.close();
 
         mainPanel p = new mainPanel();
-
+        
+        //add elements to the panel for drawing
         for (trackElement e : t.getAllElements()) {
             p.addElement(e);
         }
-
+        
+        //jframe stuff
         JFrame frame = new JFrame("Draw Arc Demo");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.add(p);

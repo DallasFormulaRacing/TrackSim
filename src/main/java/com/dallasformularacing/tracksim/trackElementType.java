@@ -6,7 +6,7 @@
 package com.dallasformularacing.tracksim;
 
 /**
- *
+ * an enum representing track element types
  * @author Josh
  */
 public enum trackElementType {

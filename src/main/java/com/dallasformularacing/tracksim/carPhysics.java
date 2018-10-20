@@ -8,14 +8,14 @@ package com.dallasformularacing.tracksim;
 import static com.dallasformularacing.tracksim.trackElementType.CURVE;
 
 /**
- *
+ * Class to calculate track time and eventually other physics too
  * @author Josh
  */
 
 
 public class carPhysics {
     
-    final double weight = 1000;
+   
     double time = 0;
   
     
@@ -26,15 +26,19 @@ public class carPhysics {
     }
     
     
-    
+    /**
+     * 
+     * @param t track element to calculate
+     * @return time needed for car to complete this element
+     */
+    //TODO: this needs lots of work
     public double elementTime(trackElement t){
         
         double velocity, time;
         
         if(t.getType() == CURVE){
             
-            velocity = Math.sqrt(t.getRadius() * 1);
-            //return t.getCurveLength() / velocity
+           
             
         }else{
             
