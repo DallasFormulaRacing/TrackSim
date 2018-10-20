@@ -18,7 +18,6 @@ import java.io.Reader;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-
 /**
  *
  * @author Josh
@@ -31,11 +30,12 @@ class Main {
 
         trackBuilder t = new trackBuilder(filename);
 
-       // t.addElement(new trackElement(CURVE, 0, 0, 180, 45, 100));
-       // t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 45, 100));
-       t.addElement(new trackElement(CURVE, 0, 0, 180, 30, 100));
-       t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 30, 100));
-    t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 65, 100));
+        t.addElement(new trackElement(CURVE, 0, 0, 180, 45, 100));
+        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 30, 100));
+        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 45, 100));
+        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 60, 100));
+        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 180, 100));
+        
         t.close();
 
         mainPanel p = new mainPanel();
