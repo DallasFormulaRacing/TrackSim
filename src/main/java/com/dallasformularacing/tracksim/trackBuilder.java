@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 
 public class trackBuilder {
 
-    private static LinkedList<trackElement> elements = new LinkedList();
+    private LinkedList<trackElement> elements = new LinkedList();
     private CSVReader csvr;
     private CSVWriter csvw;
 
@@ -41,7 +41,7 @@ public class trackBuilder {
     public trackBuilder(String filename) {
 
         //our key for the data elements in the csv file
-        String[] CSVHeader = {"type", "x0", "y0", "x1", "y1", "entryTheta", "dTheta" , "exitTheta","radius"};
+        String[] CSVHeader = {"type", "x0", "y0", "x1", "y1", "entryTheta", "dTheta" , "exitTheta", "radius", "length", "time"};
        
         try {
             try{
@@ -99,11 +99,11 @@ public class trackBuilder {
         return elements.getLast().getY1();
     }
     
-    public static double getLastEntryTheta(){
+    public double getLastEntryTheta(){
         return elements.getLast().getEntryTheta();
     }
     
-    public static double getLastExitTheta(){
+    public double getLastExitTheta(){
         return elements.getLast().getExitTheta();
     }
     

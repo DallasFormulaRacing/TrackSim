@@ -16,13 +16,14 @@ import static com.dallasformularacing.tracksim.trackElementType.CURVE;
 public class carPhysics {
     
    
-    double time = 0;
+    private static double totalTime = 0;
+    private static double G = 0.9;
+    private static double aRad = G * 9.8;
   
     
-    public double getTime(){
-        
-        
-        return time;
+    public double totalTime(){
+
+        return totalTime;
     }
     
     
@@ -32,13 +33,16 @@ public class carPhysics {
      * @return time needed for car to complete this element
      */
     //TODO: this needs lots of work
-    public double elementTime(trackElement t){
+    public static double elementTime(trackElement t){
         
         double velocity, time;
         
         if(t.getType() == CURVE){
             
-           
+            velocity = Math.sqrt(aRad * t.getRadius());
+            time = t.getLength() / velocity;
+            totalTime += time;
+            return time;
             
         }else{
             

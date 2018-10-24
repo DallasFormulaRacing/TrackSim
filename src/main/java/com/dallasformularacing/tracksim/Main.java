@@ -29,6 +29,7 @@ class Main {
     public static void main(String[] args) {
 
         trackBuilder t = new trackBuilder(filename);
+        carPhysics phys = new carPhysics();
 
         //This is the structure for creating track elements
         //why does the initial angle start at 180*, you may ask yourself
@@ -41,6 +42,13 @@ class Main {
         
         //close I/O when we're done adding elements
         t.close();
+        
+        System.out.println("total: " + phys.totalTime());
+        
+        
+        
+        
+        
 
         mainPanel p = new mainPanel();
         

@@ -16,7 +16,7 @@ import static java.awt.geom.Arc2D.OPEN;
 public class trackElement {
 
     private trackElementType type;
-    private double x0, y0, x1, y1, dx, dy, entryTheta, dTheta, exitTheta, radius;
+    private double x0, y0, x1, y1, dx, dy, entryTheta, dTheta, exitTheta, radius, time;
 
     /**
      * This constructor is for straight elements only
@@ -75,6 +75,8 @@ public class trackElement {
         this.y1 = arc.getEndPoint().getY() - dy;
         this.type = t;  
         this.radius = radius;
+        
+        this.time = carPhysics.elementTime(this);
     }
 
     
@@ -82,7 +84,7 @@ public class trackElement {
     public String[] getData() {
 
         String[] s = {type.toString(), Double.toString(x0), Double.toString(y0), Double.toString(x1), Double.toString(y1), Double.toString(entryTheta), 
-                        Double.toString(dTheta), Double.toString(exitTheta), Double.toString(radius)};
+                        Double.toString(dTheta), Double.toString(exitTheta), Double.toString(radius), Double.toString(getLength()), Double.toString(time)};
         return s;
     }
 
@@ -130,9 +132,13 @@ public class trackElement {
          return dy;
      }
      
-     public double getCurveLength(){
+     public double getLength(){
+         if(this.type == CURVE){
+           return (2 * Math.PI * radius * (dTheta / 360) );  
+         }else{
+             return 0;
+         }
          
-         return (2 * Math.PI * radius * (dTheta / 360) );
      }
      
      

@@ -11,10 +11,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import static java.awt.geom.Arc2D.PIE;
 import java.awt.geom.Line2D;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 
 /**
@@ -26,6 +29,8 @@ import javax.swing.JPanel;
 public class mainPanel extends JPanel {
     
     private LinkedList<trackElement> elements = new LinkedList();
+    private Graphics2D g2;
+    private double x0, y0, x1, y1, dx, dy = 0;
     
     /**
      * Constructor
@@ -37,13 +42,42 @@ public class mainPanel extends JPanel {
         this.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
+               
+                if(x0 == 0 && y0 == 0 && x1 == 0 && y1 == 0){
+                    x0 = e.getX();
+                    y0 = e.getY();
+                }else if(x0 != 0 && y0 != 0 && x1 == 0 && y1 == 0){
+                    x1 = e.getX();
+                    y1 = e.getY();
+                }else if(x0 != 0 && y0 != 0 && x1 != 0 && y1 != 0){
+                    
+                    dx = dx + (x1 - x0);
+                    dy = dy + (y1 - y0);
+                    
+                    System.out.println("dx: " + dx + " dy: " + dy);
+                    
+                    repaint();
+                    
+                    x0 = 0;
+                    y0 = 0;
+                    x1 = 0;
+                    y1 = 0;
+
+                }
+                
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
                 
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {
                 
-               System.out.println("x: " + (e.getPoint().x - mainPanel.super.getWidth()/2) + "y: " + (e.getPoint().y - mainPanel.super.getHeight()/2) );
+               
                
             }
         });
@@ -59,7 +93,12 @@ public class mainPanel extends JPanel {
         
         super.paint(g);
         
-        Graphics2D g2 = (Graphics2D) g;
+        g2 = (Graphics2D) g;
+        
+        AffineTransform at = new AffineTransform();
+        at.translate(dx, dy);
+        g2.transform(at);
+        
         
         //set (0,0) to the middle of the panel
         g2.translate(super.getWidth()/2, super.getHeight()/2);
@@ -83,6 +122,7 @@ public class mainPanel extends JPanel {
               
           }
         }
+        
     }
     
     //Add an element to be drawn
