@@ -8,6 +8,7 @@ package com.dallasformularacing.tracksim;
 import static com.dallasformularacing.tracksim.trackElementType.*;
 import java.awt.geom.Arc2D;
 import static java.awt.geom.Arc2D.OPEN;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Class representing an individual track element; curves and straights
@@ -16,7 +17,8 @@ import static java.awt.geom.Arc2D.OPEN;
 public class trackElement {
 
     private trackElementType type;
-    private double x0, y0, x1, y1, dx, dy, entryTheta, dTheta, exitTheta, radius, time;
+    private double x0, y0, x1, y1, dx, dy, entryTheta, dTheta, exitTheta, radius, length, time;
+    private Arc2D arc;
 
     /**
      * This constructor is for straight elements only
@@ -32,11 +34,13 @@ public class trackElement {
         this.x0 = x0;
         this.y0 = y0; 
         this.type = t; 
-        this.x1 = x0 + (length * Math.cos(Math.toRadians(theta)));
-        this.y1 = y0 - (length * Math.sin(Math.toRadians(theta)));
+        this.x1 = x0 + (length * Math.cos(Math.toRadians(90 - (180 - theta))));
+        this.y1 = y0 - (length * Math.sin(Math.toRadians(90 - (180 - theta))));
         this.entryTheta = theta;
         this.exitTheta = this.entryTheta;
         this.radius = -1;
+        this.length = length;
+        this.time = carPhysics.elementTime(this);
     }
 
     /**
@@ -52,7 +56,8 @@ public class trackElement {
     public trackElement(trackElementType t, double x0, double y0, double entryTheta, double dTheta, double radius) {
 
         //We're using a java2d arc element here to make some calculations easier
-        Arc2D arc = new Arc2D.Double();
+        arc = new Arc2D.Double();
+       
         this.entryTheta = entryTheta; 
         this.exitTheta = this.entryTheta - dTheta;
         this.dTheta = this.entryTheta - this.exitTheta;
@@ -75,7 +80,7 @@ public class trackElement {
         this.y1 = arc.getEndPoint().getY() - dy;
         this.type = t;  
         this.radius = radius;
-        
+        this.length = 2 * Math.PI * radius * (dTheta / 360);
         this.time = carPhysics.elementTime(this);
     }
 
@@ -133,12 +138,18 @@ public class trackElement {
      }
      
      public double getLength(){
-         if(this.type == CURVE){
-           return (2 * Math.PI * radius * (dTheta / 360) );  
-         }else{
-             return 0;
-         }
          
+         return length;
+         
+     }
+     
+     public Arc2D getArc(){
+         if(type == CURVE){
+              return arc;
+         }else{
+             return null;
+         }
+        
      }
      
      

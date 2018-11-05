@@ -35,10 +35,7 @@ class Main {
         //why does the initial angle start at 180*, you may ask yourself
         //it just be like that
         t.addElement(new trackElement(CURVE, 0, 0, 180, 45, 100));
-        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 30, 100));
-        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 45, 100));
-        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 60, 100));
-        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 180, 100));
+        t.addElement(new trackElement(STRAIGHT, t.getLastX(), t.getLastY(), 100, t.getLastExitTheta()));
         
         //close I/O when we're done adding elements
         t.close();

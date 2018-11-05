@@ -113,8 +113,8 @@ public class mainPanel extends JPanel {
         for(trackElement t: elements){
             
           if(t.getType() == CURVE){  
-              
-              g2.draw(new Arc2D.Double(t.getX0() - t.getdx(), t.getY0() - t.getRadius() + t.getdy(), t.getRadius() * 2, t.getRadius() * 2, t.getEntryTheta(), -t.getdTheta(), PIE));
+             
+              g2.draw(t.getArc());
               
           }else if(t.getType() == STRAIGHT){
               
