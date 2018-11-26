@@ -5,24 +5,20 @@
  */
 package com.dallasformularacing.tracksim;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Graphics;
-import javax.swing.JPanel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 /**
  *
  * @author Josh
  */
-
-//Parent panel for all of our other shit
-public class MainPanel extends JPanel{
+public class Menu extends JMenuBar {
     
-    public MainPanel(){
+    
+    public void Menu(){
         
-        this.setLayout(new BorderLayout());
+        
+       
     }
-
-    
-    
 }

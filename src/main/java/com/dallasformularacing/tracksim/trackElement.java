@@ -56,7 +56,7 @@ public class trackElement {
     public trackElement(trackElementType t, double x0, double y0, double entryTheta, double dTheta, double radius) {
 
         //We're using a java2d arc element here to make some calculations easier
-        arc = new Arc2D.Double();
+        this.arc = new Arc2D.Double();
        
         this.entryTheta = entryTheta; 
         this.exitTheta = this.entryTheta - dTheta;
@@ -68,7 +68,7 @@ public class trackElement {
         //next param is the initial angle of the curve followed by the angle extent of the curve
         //last param doesn't really matter
         //(negative angle CW positive angle CCW)
-        arc.setArc(x0, y0 - radius, radius * 2, radius * 2 , this.entryTheta, -dTheta, OPEN);
+        this.arc.setArc(x0, y0 - radius, radius * 2, radius * 2 , this.entryTheta, dTheta, OPEN);
         
         //this is needed because if entryTheta != 180, x0 & y0 are not equal to the starting point of the arc
         double dx = arc.getStartPoint().getX() - x0;
@@ -82,6 +82,8 @@ public class trackElement {
         this.radius = radius;
         this.length = 2 * Math.PI * radius * (dTheta / 360);
         this.time = carPhysics.elementTime(this);
+        
+        this.arc.setArc(this.x0 - dx, this.y0 - radius - dy, this.radius * 2, this.radius * 2, this.entryTheta, this.dTheta, OPEN);
     }
 
     
