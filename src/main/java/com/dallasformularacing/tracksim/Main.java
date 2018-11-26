@@ -63,7 +63,7 @@ class Main {
         frame.setPreferredSize(new Dimension(960, 640)); 
         
         //initialize all our componenets
-        MainPanel mainPanel = new MainPanel();
+        ParentPanel mainPanel = new ParentPanel();
         
         //TrackPanel will be used as a singleton object for modification in multiple classes
         TrackPanel.getInstance();
