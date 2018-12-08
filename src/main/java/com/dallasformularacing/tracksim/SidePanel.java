@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -31,17 +32,19 @@ import javax.swing.event.ChangeListener;
 //panel for controls
 public class SidePanel extends JPanel {
 
-    private     JSlider     radiusSlider, angleSlider;
-    private     JTextField  radiusField, angleField;
-    private     JLabel      radiusLabel, angleLabel;
-    private     JPanel      spacer;
-    private     JButton     addButton;
-    private     trackElement    t;
-    private     ButtonGroup     typeButtons;
-    private     JRadioButton    straight, curve; 
-    
-    private double radius, angle, length = 0;
-    
+    private JSlider radiusSlider, angleSlider;
+    private JTextField radiusField, angleField;
+    private JLabel radiusLabel, angleLabel, entryAngle, exitAngle, deltaAngle;
+    private JPanel spacer;
+    private JButton addButton;
+    private JToggleButton reverseButton;
+    private trackElement t;
+    private ButtonGroup typeButtons;
+    private JRadioButton straight, curve;
+
+    private double radius, entAngle, exAngle, dAngle, length, x, y  = 0;
+    private boolean isReversed = false;
+
     public SidePanel(int width, int height) {
 
         //this panel will use a box layout (items ordered vertically)
@@ -57,8 +60,6 @@ public class SidePanel extends JPanel {
         this.setBorder(b);
         this.setBackground(Color.LIGHT_GRAY);
 
-        
-        
         //add label for radius slider
         radiusLabel = new JLabel();
         radiusLabel.setText("Radius");
@@ -66,19 +67,15 @@ public class SidePanel extends JPanel {
         radiusLabel.setMaximumSize(radiusLabel.getPreferredSize());
         this.add(radiusLabel);
 
-        
-        
         //Set up radius slider
         radiusSlider = new JSlider();
         radiusSlider.setMaximum(1000);
-        radiusSlider.setMinimum(-1000);
+        radiusSlider.setMinimum(0);
         radiusSlider.setValue(0);
         radiusSlider.setPreferredSize(new Dimension(this.getPreferredSize().width, 30));
         radiusSlider.setMaximumSize(radiusSlider.getPreferredSize());
         this.add(radiusSlider);
 
-        
-        
         //radius slider listener
         radiusSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -89,17 +86,11 @@ public class SidePanel extends JPanel {
                 JSlider src = (JSlider) e.getSource();
                 radius = src.getValue();
                 radiusField.setText(Integer.toString(src.getValue()));
-                
-                if(radius > 0 ){
-                    t = new trackElement(CURVE, 0, 0, 180, -angle, radius);
-                }else if(radius < 0){
-                    
-                    t = new trackElement(CURVE, 0, 0, 0, -angle, Math.abs(radius));
-                }
-                
+
+                createElement();
 
                 TrackPanel.getInstance().drawSingleElement(t);
-                
+
             }
         });
 
@@ -110,13 +101,11 @@ public class SidePanel extends JPanel {
         radiusField.setPreferredSize(new Dimension(this.getPreferredSize().width / 2, 30));
         radiusField.setMaximumSize(radiusField.getPreferredSize());
 
-        
-        
         //radius text field listener
         radiusField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+
                 JTextField src = (JTextField) e.getSource();
                 radiusSlider.setValue(Integer.parseInt(src.getText()));
             }
@@ -125,12 +114,8 @@ public class SidePanel extends JPanel {
 
         
         
-        //add a spacer
-        spacer = new JPanel();
-        spacer.setBackground(this.getBackground());
-        spacer.setPreferredSize(new Dimension(this.getPreferredSize().width, 25));
-        spacer.setMaximumSize(spacer.getPreferredSize());
-        this.add(spacer);
+       //a spacer
+        this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
 
         
         
@@ -151,28 +136,25 @@ public class SidePanel extends JPanel {
         angleSlider.setPreferredSize(new Dimension(this.getPreferredSize().width, 30));
         angleSlider.setMaximumSize(angleSlider.getPreferredSize());
         this.add(angleSlider);
-
-        
         
         //angle slider listener
         angleSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                
+
                 //create new slider object to represent the event state
                 //set angle and update the text field
                 JSlider src = (JSlider) e.getSource();
-                angle = src.getValue();
+                dAngle = src.getValue();
                 angleField.setText(Integer.toString(src.getValue()));
-               
-                if(radius > 0 ){
-                    t = new trackElement(CURVE, 0, 0, 180, -angle, radius);
-                }else if(radius < 0){
-                    
-                    t = new trackElement(CURVE, 0, 0, 0, -angle, Math.abs(radius));
-                }
-                
+
+                createElement();
+
                 TrackPanel.getInstance().drawSingleElement(t);
+                
+                entryAngle.setText("entry: " + Double.toString(t.getEntryTheta()));
+                exitAngle.setText("exit: " +Double.toString(t.getExitTheta()));
+                deltaAngle.setText("delta: " +Double.toString(t.getdTheta()));
             }
         });
 
@@ -183,8 +165,7 @@ public class SidePanel extends JPanel {
         angleField.setPreferredSize(new Dimension(this.getPreferredSize().width / 2, 30));
         angleField.setMaximumSize(angleField.getPreferredSize());
         this.add(angleField);
-        
-        
+
         //angle text field listener
         angleField.addActionListener(new ActionListener() {
             @Override
@@ -193,49 +174,105 @@ public class SidePanel extends JPanel {
                 angleSlider.setValue(Integer.parseInt(src.getText()));
             }
         });
-       
+
         
-        this.add(spacer);
         
+        this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
+
         
         
         //radio buttons
         typeButtons = new ButtonGroup();
-        
+
         straight = new JRadioButton();
         straight.setText("Straight");
-        
+
         curve = new JRadioButton();
         curve.setText("Curve");
-        
+
         typeButtons.add(straight);
         typeButtons.add(curve);
         //TODO add button listener
         this.add(straight);
         this.add(curve);
+
+        
+        
+        this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
         
         
         
-        this.add(spacer);
+        //reverse button
+        reverseButton = new JToggleButton();
+        reverseButton.setText("Reverse");
+        reverseButton.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if(isReversed == false){
+                    isReversed = true;
+                }else{
+                    isReversed = false;
+                }
+            }
+        });
+        this.add(reverseButton);
+        
+        
+        
+        this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
+        
         
         //add button
         addButton = new JButton();
         addButton.setText("Ass");
-        
-        
-       
-       
+
         //add button listener
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
-                
-                
+
+                TrackPanel.getInstance().addElement(t);
+                trackBuilder.getInstance().addElement(t);
+                trackBuilder.getInstance().close();
+
             }
         });
-        
-        this.add(addButton);
-    }
 
+        this.add(addButton);
+        
+        
+        
+        entryAngle = new JLabel();
+        exitAngle = new JLabel();
+        deltaAngle = new JLabel();
+        this.add(entryAngle);
+        this.add(exitAngle);
+        this.add(deltaAngle);
+    }
+     
+    
+
+    private void createElement() {
+
+        if (isReversed == false) {
+            if (trackBuilder.getInstance().getAllElements().isEmpty()) {
+                t = new trackElement(CURVE, 0, 0, 0, dAngle, radius);
+            } else {
+                t = new trackElement(CURVE, trackBuilder.getInstance().getLastElement().getX1(), trackBuilder.getInstance().getLastElement().getY1(), 
+                                            trackBuilder.getInstance().getLastElement().getExitTheta(), dAngle, radius);
+            }
+
+        }else{
+            if (trackBuilder.getInstance().getAllElements().isEmpty()) {
+                t = new trackElement(CURVE, 0, 0, 180, dAngle, radius);
+            } else {
+                t = new trackElement(CURVE, trackBuilder.getInstance().getLastElement().getX1(), trackBuilder.getInstance().getLastElement().getY1(), 
+                                           180 - trackBuilder.getInstance().getLastElement().getExitTheta(), dAngle, radius);
+            }
+            
+        }
+
+    }
+    
+    
 }

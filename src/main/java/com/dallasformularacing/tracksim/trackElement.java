@@ -84,6 +84,8 @@ public class trackElement {
         this.time = carPhysics.elementTime(this);
         
         this.arc.setArc(this.x0 - dx, this.y0 - radius - dy, this.radius * 2, this.radius * 2, this.entryTheta, this.dTheta, OPEN);
+        
+        this.exitTheta = this.arc.getAngleStart() + this.arc.getAngleExtent();
     }
 
     
@@ -154,5 +156,9 @@ public class trackElement {
         
      }
      
+     public Rectangle2D getBoundingBox(){
+         
+         return arc.getBounds2D();
+     }
      
 }

@@ -30,11 +30,11 @@ import javax.swing.WindowConstants;
  */
 class Main {
 
-    private static String filename = "test.csv";
+    //private static String filename = "test.csv";
 
     public static void main(String[] args) {
 
-        trackBuilder t = new trackBuilder(filename);
+        //trackBuilder t = new trackBuilder(filename);
         carPhysics phys = new carPhysics();
 
         //This is the structure for creating track elements
@@ -53,7 +53,7 @@ class Main {
         
         
         //close I/O when we're done adding elements
-        t.close();
+        //t.close();
         
         System.out.println("total: " + phys.totalTime());
         
@@ -72,9 +72,7 @@ class Main {
         
         
         //add elements to the panel for drawing
-        for (trackElement e : t.getAllElements()) {
-            TrackPanel.getInstance().addElement(e);
-        }
+        
   
         
         mainPanel.add(TrackPanel.getInstance(), BorderLayout.CENTER);

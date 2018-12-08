@@ -115,6 +115,7 @@ public class TrackPanel extends JPanel {
             if (t.getType() == CURVE) {
 
                 g2.draw(t.getArc());
+                g2.draw(t.getBoundingBox());
 
             } else if (t.getType() == STRAIGHT) {
 
@@ -131,7 +132,8 @@ public class TrackPanel extends JPanel {
             if (singleElement.getType() == CURVE) {
 
                 g2.draw(singleElement.getArc());
-
+                g2.draw(singleElement.getBoundingBox());
+                
             } else {
 
             }

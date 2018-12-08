@@ -33,7 +33,9 @@ public class trackBuilder {
     private LinkedList<trackElement> elements = new LinkedList();
     private CSVReader csvr;
     private CSVWriter csvw;
-
+    private static trackBuilder instance;
+    private static boolean instanceExists = false;
+    
     /**
      * Constructor
      * @param filename filename of csv file of track. Creates it if not exists
@@ -123,6 +125,19 @@ public class trackBuilder {
     }
 
     
+    public static trackBuilder getInstance(){
+        
+        if(instanceExists == false){
+            
+            instance = new trackBuilder("test.csv");
+            instanceExists = true;
+            return instance;
+        }else{
+            
+            return instance;
+        }
+        
+    }
     
 
 }
