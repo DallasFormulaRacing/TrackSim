@@ -5,20 +5,24 @@
  */
 package com.dallasformularacing.tracksim;
 
-import static com.dallasformularacing.tracksim.trackElementType.*;
+import static com.dallasformularacing.tracksim.TrackElementType.*;
 import java.awt.geom.Arc2D;
 import static java.awt.geom.Arc2D.OPEN;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 /**
  * Class representing an individual track element; curves and straights
  * @author Josh
  */
-public class trackElement {
+public class TrackElement {
 
-    private trackElementType type;
+    private TrackElementType type;
     private double x0, y0, x1, y1, dx, dy, entryTheta, dTheta, exitTheta, radius, length, time;
+
+   
     private Arc2D arc;
+    private Line2D line = new Line2D.Double();
 
     /**
      * This constructor is for straight elements only
@@ -26,21 +30,20 @@ public class trackElement {
      * @param t type of track element
      * @param x0 initial x pos
      * @param y0 initial y pos
-     * @param x1 ending x pos
-     * @param y1 ending y pos
      */
-    public trackElement(trackElementType t, double x0, double y0, double length, double theta) {
+    public TrackElement(TrackElementType t, double x0, double y0, double length, double theta) {
         //TODO: this function still needs work
         this.x0 = x0;
         this.y0 = y0; 
         this.type = t; 
-        this.x1 = x0 + (length * Math.cos(Math.toRadians(90 - (180 - theta))));
-        this.y1 = y0 - (length * Math.sin(Math.toRadians(90 - (180 - theta))));
+        this.x1 = x0 - (length * Math.cos(Math.toRadians(90 - (180 - theta))));
+        this.y1 = y0 + (length * Math.sin(Math.toRadians(90 - (180 - theta))));
         this.entryTheta = theta;
         this.exitTheta = this.entryTheta;
         this.radius = -1;
         this.length = length;
-        this.time = carPhysics.elementTime(this);
+        this.time = CarPhysics.elementTime(this);
+        this.line.setLine(x0, y0, x1, y1);
     }
 
     /**
@@ -53,7 +56,7 @@ public class trackElement {
      * @param dTheta angle of the turn itself
      * @param radius
      */
-    public trackElement(trackElementType t, double x0, double y0, double entryTheta, double dTheta, double radius) {
+    public TrackElement(TrackElementType t, double x0, double y0, double entryTheta, double dTheta, double radius) {
 
         //We're using a java2d arc element here to make some calculations easier
         this.arc = new Arc2D.Double();
@@ -73,7 +76,7 @@ public class trackElement {
         //this is needed because if entryTheta != 180, x0 & y0 are not equal to the starting point of the arc
         double dx = arc.getStartPoint().getX() - x0;
         double dy = arc.getStartPoint().getY() - y0;
-        
+
         this.x0 = arc.getStartPoint().getX() - dx;
         this.y0 = arc.getStartPoint().getY() - dy;
         this.x1 = arc.getEndPoint().getX() - dx;
@@ -81,11 +84,12 @@ public class trackElement {
         this.type = t;  
         this.radius = radius;
         this.length = 2 * Math.PI * radius * (dTheta / 360);
-        this.time = carPhysics.elementTime(this);
+        this.time = CarPhysics.elementTime(this);
         
         this.arc.setArc(this.x0 - dx, this.y0 - radius - dy, this.radius * 2, this.radius * 2, this.entryTheta, this.dTheta, OPEN);
         
         this.exitTheta = this.arc.getAngleStart() + this.arc.getAngleExtent();
+        
     }
 
     
@@ -125,7 +129,7 @@ public class trackElement {
         return exitTheta;
     }
      
-     public trackElementType getType() {
+     public TrackElementType getType() {
         return type;
     }
      
@@ -156,9 +160,16 @@ public class trackElement {
         
      }
      
+     public Line2D getLine(){
+         return line;
+     }
+     
      public Rectangle2D getBoundingBox(){
          
          return arc.getBounds2D();
      }
      
+      public double getTime() {
+        return time;
+    }
 }

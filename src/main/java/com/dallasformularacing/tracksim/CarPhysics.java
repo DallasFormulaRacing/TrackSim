@@ -5,20 +5,20 @@
  */
 package com.dallasformularacing.tracksim;
 
-import static com.dallasformularacing.tracksim.trackElementType.CURVE;
+import static com.dallasformularacing.tracksim.TrackElementType.CURVE;
 
 /**
  * Class to calculate track time and eventually other physics too
  *
  * @author Josh
  */
-public class carPhysics {
+public class CarPhysics {
 
-    //these are roughly the specs of a 1.6 NA Miata, in m/s
+    //these are roughly the specs of a 4th gen ND Miata, in m/s
     private static double totalTime = 0;
-    private static double gLat = 0.9;
+    private static double gLat = 0.88;
     private static double aLat = gLat * 9.8;
-    private static double aLong = 2.82;
+    private static double aLong = 4.39;
 
     public double totalTime() {
 
@@ -31,7 +31,7 @@ public class carPhysics {
      * @return time needed for car to complete this element
      */
     //TODO: this needs lots of work
-    public static double elementTime(trackElement t) {
+    public static double elementTime(TrackElement t) {
 
         double velocity, time;
 

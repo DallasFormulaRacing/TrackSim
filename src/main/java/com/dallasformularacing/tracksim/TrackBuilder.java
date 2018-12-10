@@ -28,19 +28,20 @@ import java.util.logging.Logger;
  * @author Josh
  */
 
-public class trackBuilder {
+public class TrackBuilder {
 
-    private LinkedList<trackElement> elements = new LinkedList();
+    private LinkedList<TrackElement> elements = new LinkedList();
     private CSVReader csvr;
     private CSVWriter csvw;
-    private static trackBuilder instance;
+    private static TrackBuilder instance;
     private static boolean instanceExists = false;
+    private double time = 0;
     
     /**
      * Constructor
      * @param filename filename of csv file of track. Creates it if not exists
      */
-    public trackBuilder(String filename) {
+    public TrackBuilder(String filename) {
 
         //our key for the data elements in the csv file
         String[] CSVHeader = {"type", "x0", "y0", "x1", "y1", "entryTheta", "dTheta" , "exitTheta", "radius", "length", "time"};
@@ -58,7 +59,7 @@ public class trackBuilder {
                 
             }catch(Exception e){
                 //Create file, initialize I/O, write the header to the file
-                e.printStackTrace();
+                
                 System.out.println("File not found, creating now");
                 File f = new File(filename);
                 f.createNewFile();
@@ -74,8 +75,9 @@ public class trackBuilder {
     }
 
     //add element and write it to file
-    public void addElement(trackElement e) {
+    public void addElement(TrackElement e) {
         elements.add(e);
+        time += e.getTime();
         csvw.writeNext(e.getData());
     }
     
@@ -89,7 +91,7 @@ public class trackBuilder {
     }
     
     //bunch of getter functions
-    public trackElement getLastElement(){
+    public TrackElement getLastElement(){
         return elements.getLast();
     }
    
@@ -109,7 +111,7 @@ public class trackBuilder {
         return elements.getLast().getExitTheta();
     }
     
-    public LinkedList<trackElement> getAllElements(){
+    public LinkedList<TrackElement> getAllElements(){
         return elements;
     }
     
@@ -120,16 +122,16 @@ public class trackBuilder {
             csvr.close();
             csvw.close();
         } catch (IOException ex) {
-            Logger.getLogger(trackBuilder.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TrackBuilder.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     
-    public static trackBuilder getInstance(){
+    public static TrackBuilder getInstance(){
         
         if(instanceExists == false){
             
-            instance = new trackBuilder("test.csv");
+            instance = new TrackBuilder("test.csv");
             instanceExists = true;
             return instance;
         }else{
@@ -139,5 +141,8 @@ public class trackBuilder {
         
     }
     
+    public double getTime(){
+        return time;
+    }
 
 }

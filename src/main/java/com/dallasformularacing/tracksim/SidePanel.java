@@ -5,7 +5,7 @@
  */
 package com.dallasformularacing.tracksim;
 
-import static com.dallasformularacing.tracksim.trackElementType.CURVE;
+import static com.dallasformularacing.tracksim.TrackElementType.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -34,17 +34,18 @@ public class SidePanel extends JPanel {
 
     private JSlider radiusSlider, angleSlider;
     private JTextField radiusField, angleField;
-    private JLabel radiusLabel, angleLabel, entryAngle, exitAngle, deltaAngle;
-    private JPanel spacer;
-    private JButton addButton;
+    private JLabel radiusLabel, angleLabel, entryAngleLabel, exitAngleLabel, deltaAngleLabel, pos0Label, pos1Label, totalTimeLabel;
+    private JButton addButton, finishButton;
     private JToggleButton reverseButton;
-    private trackElement t;
+    private TrackElement t;
     private ButtonGroup typeButtons;
-    private JRadioButton straight, curve;
+    private JRadioButton straightRButton, curveRButton;
 
-    private double radius, entAngle, exAngle, dAngle, length, x, y  = 0;
+    private double radius, deltaAngle = 0;
     private boolean isReversed = false;
-
+    
+    private TrackElementType elementState = CURVE;
+    
     public SidePanel(int width, int height) {
 
         //this panel will use a box layout (items ordered vertically)
@@ -53,13 +54,19 @@ public class SidePanel extends JPanel {
         this.setPreferredSize(new Dimension(width, height));
         this.setMaximumSize(this.getPreferredSize());
 
-        
-        
         //add a border & bg
         javax.swing.border.Border b = BorderFactory.createLineBorder(Color.DARK_GRAY);
         this.setBorder(b);
         this.setBackground(Color.LIGHT_GRAY);
-
+        
+        
+        
+         /*
+        *-----------------------
+        *CODE FOR RADIUS CONTROLS
+        *-----------------------
+        */
+         
         //add label for radius slider
         radiusLabel = new JLabel();
         radiusLabel.setText("Radius");
@@ -77,25 +84,18 @@ public class SidePanel extends JPanel {
         this.add(radiusSlider);
 
         //radius slider listener
-        radiusSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-
-                //create new slider object to represent the event state
-                //set radius and update the text field
-                JSlider src = (JSlider) e.getSource();
-                radius = src.getValue();
-                radiusField.setText(Integer.toString(src.getValue()));
-
-                createElement();
-
-                TrackPanel.getInstance().drawSingleElement(t);
-
-            }
+        radiusSlider.addChangeListener((ChangeEvent e) -> {
+            //create new slider object to represent the event state
+            //set radius and update the text field
+            JSlider src = (JSlider) e.getSource();
+            radius = src.getValue();
+            radiusField.setText(Integer.toString(src.getValue()));
+            
+            //render the element in TrackPanel
+            createElement();
+            updateFields();
         });
 
-        
-        
         //Add text field for radius
         radiusField = new JTextField();
         radiusField.setPreferredSize(new Dimension(this.getPreferredSize().width / 2, 30));
@@ -108,17 +108,25 @@ public class SidePanel extends JPanel {
 
                 JTextField src = (JTextField) e.getSource();
                 radiusSlider.setValue(Integer.parseInt(src.getText()));
+                
+                createElement();            
+                updateFields();
             }
         });
         this.add(radiusField);
 
         
         
-       //a spacer
+        //a spacer
         this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
 
         
         
+        /*
+        *-----------------------
+        *CODE FOR ANGLE CONTROLS
+        *-----------------------
+        */
         //add label for angle
         angleLabel = new JLabel();
         angleLabel.setText("Angle");
@@ -126,8 +134,6 @@ public class SidePanel extends JPanel {
         angleLabel.setMaximumSize(angleLabel.getPreferredSize());
         this.add(angleLabel);
 
-        
-        
         //add angle slider
         angleSlider = new JSlider();
         angleSlider.setMaximum(90);
@@ -136,7 +142,7 @@ public class SidePanel extends JPanel {
         angleSlider.setPreferredSize(new Dimension(this.getPreferredSize().width, 30));
         angleSlider.setMaximumSize(angleSlider.getPreferredSize());
         this.add(angleSlider);
-        
+
         //angle slider listener
         angleSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -145,21 +151,15 @@ public class SidePanel extends JPanel {
                 //create new slider object to represent the event state
                 //set angle and update the text field
                 JSlider src = (JSlider) e.getSource();
-                dAngle = src.getValue();
+                deltaAngle = src.getValue();
                 angleField.setText(Integer.toString(src.getValue()));
 
                 createElement();
+                updateFields();
 
-                TrackPanel.getInstance().drawSingleElement(t);
-                
-                entryAngle.setText("entry: " + Double.toString(t.getEntryTheta()));
-                exitAngle.setText("exit: " +Double.toString(t.getExitTheta()));
-                deltaAngle.setText("delta: " +Double.toString(t.getdTheta()));
             }
         });
 
-        
-        
         //text field for angle slider
         angleField = new JTextField();
         angleField.setPreferredSize(new Dimension(this.getPreferredSize().width / 2, 30));
@@ -172,107 +172,223 @@ public class SidePanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JTextField src = (JTextField) e.getSource();
                 angleSlider.setValue(Integer.parseInt(src.getText()));
+                
+                createElement();            
+                updateFields();
             }
         });
 
-        
-        
+     
         this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
-
         
         
+        
+        
+         /*
+        *-----------------------
+        *CODE FOR RADIO BUTTONS
+        *-----------------------
+        */
         //radio buttons
         typeButtons = new ButtonGroup();
 
-        straight = new JRadioButton();
-        straight.setText("Straight");
+        straightRButton = new JRadioButton();
+        straightRButton.setText("Straight");
+        straightRButton.setBackground(this.getBackground());
 
-        curve = new JRadioButton();
-        curve.setText("Curve");
+        curveRButton = new JRadioButton();
+        curveRButton.setText("Curve");
+        curveRButton.setBackground(this.getBackground());
 
-        typeButtons.add(straight);
-        typeButtons.add(curve);
-        //TODO add button listener
-        this.add(straight);
-        this.add(curve);
+        typeButtons.add(straightRButton);
+        typeButtons.add(curveRButton);
+        
+        //some listeners
+        curveRButton.addActionListener((ActionEvent e) -> {
+           elementState = CURVE;
+           radiusLabel.setText("Radius");
+           
+            createElement();            
+            updateFields();
+        });
+        
+        straightRButton.addActionListener((ActionEvent e) ->{
+            elementState = STRAIGHT;
+            radiusLabel.setText("Length");
+            
+            createElement();            
+            updateFields();
+        });
+        
+        this.add(straightRButton);
+        this.add(curveRButton);
 
+        
         
         
         this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
+
         
         
-        
+        /*
+        *-----------------------
+        *CODE FOR REVERSE BUTTON
+        *-----------------------
+        */
         //reverse button
         reverseButton = new JToggleButton();
         reverseButton.setText("Reverse");
-        reverseButton.addChangeListener(new ChangeListener(){
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if(isReversed == false){
-                    isReversed = true;
-                }else{
-                    isReversed = false;
-                }
+        reverseButton.addActionListener((ActionEvent e) -> {
+            if (isReversed == false) {
+                isReversed = true;
+            } else {
+                isReversed = false;
             }
+            
+            createElement();
+            updateFields();
         });
         this.add(reverseButton);
         
         
         
-        this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
+        this.add(new Spacer(this.getPreferredSize().width, 10, this.getBackground()));
         
         
+        
+        /*
+        *-----------------------
+        *CODE FOR ADD BUTTON
+        *-----------------------
+        */
         //add button
         addButton = new JButton();
-        addButton.setText("Ass");
+        addButton.setText("Add");
 
         //add button listener
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                TrackPanel.getInstance().addElement(t);
-                trackBuilder.getInstance().addElement(t);
-                trackBuilder.getInstance().close();
-
-            }
+        addButton.addActionListener((ActionEvent e) -> {
+            TrackPanel.getInstance().addElement(t);
+            TrackBuilder.getInstance().addElement(t);
+            
+            createElement();
+            updateFields();
         });
 
         this.add(addButton);
         
         
         
-        entryAngle = new JLabel();
-        exitAngle = new JLabel();
-        deltaAngle = new JLabel();
-        this.add(entryAngle);
-        this.add(exitAngle);
-        this.add(deltaAngle);
+        this.add(new Spacer(this.getPreferredSize().width, 10, this.getBackground()));
+         
+        
+        
+        finishButton = new JButton();
+        finishButton.setText("Finish");
+        finishButton.addActionListener((ActionEvent e) ->{
+        
+            TrackBuilder.getInstance().close();
+        
+        });
+        
+        this.add(finishButton);
+        
+        
+        
+        this.add(new Spacer(this.getPreferredSize().width, 10, this.getBackground()));
+        
+        
+        
+        /*
+        *-----------------------
+        *CODE FOR DIAGNOSTIC INFO
+        *-----------------------
+        */
+        entryAngleLabel = new JLabel("Entry \u0398: -");
+        exitAngleLabel = new JLabel("Exit \u0398: -");
+        deltaAngleLabel = new JLabel("Delta \u0398: -");
+        pos0Label = new JLabel("x0: - y0: -");
+        pos1Label = new JLabel("x1: - y1: -");
+        totalTimeLabel = new JLabel("Time: -");
+        
+        this.add(entryAngleLabel);
+        this.add(exitAngleLabel);
+        this.add(deltaAngleLabel);
+        this.add(pos0Label);
+        this.add(pos1Label);
+        this.add(totalTimeLabel);
     }
-     
     
-
+    
+    
     private void createElement() {
 
-        if (isReversed == false) {
-            if (trackBuilder.getInstance().getAllElements().isEmpty()) {
-                t = new trackElement(CURVE, 0, 0, 0, dAngle, radius);
+        double lastX = 0, lastY = 0, thisX, thisY, deltaX = 0, deltaY = 0;
+        
+        if(elementState == CURVE){
+            if (isReversed == false) {
+                if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
+                    t = new TrackElement(CURVE, 0, 0, 0, deltaAngle, radius);
+                } else {
+
+                    t = new TrackElement(CURVE, TrackBuilder.getInstance().getLastElement().getX1(), TrackBuilder.getInstance().getLastElement().getY1(),
+                            TrackBuilder.getInstance().getLastElement().getExitTheta(), deltaAngle, radius);
+                }
+
             } else {
-                t = new trackElement(CURVE, trackBuilder.getInstance().getLastElement().getX1(), trackBuilder.getInstance().getLastElement().getY1(), 
-                                            trackBuilder.getInstance().getLastElement().getExitTheta(), dAngle, radius);
+                if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
+                    t = new TrackElement(CURVE, 0, 0, 180, deltaAngle, radius);
+                } else {
+
+                    lastX = TrackBuilder.getInstance().getLastX();
+                    lastY = TrackBuilder.getInstance().getLastY();
+
+                    t = new TrackElement(CURVE, lastX, lastY,
+                            270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+
+                    thisY = t.getY1();
+                    thisX = t.getX1();
+
+                    deltaX = thisX - lastX;
+                    deltaY = thisY - lastY;
+
+                    t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
+                            270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+
+
+                }
             }
 
-        }else{
-            if (trackBuilder.getInstance().getAllElements().isEmpty()) {
-                t = new trackElement(CURVE, 0, 0, 180, dAngle, radius);
-            } else {
-                t = new trackElement(CURVE, trackBuilder.getInstance().getLastElement().getX1(), trackBuilder.getInstance().getLastElement().getY1(), 
-                                           180 - trackBuilder.getInstance().getLastElement().getExitTheta(), dAngle, radius);
+        }else if(elementState == STRAIGHT){
+            
+            if(TrackBuilder.getInstance().getAllElements().isEmpty()){
+                
+            }else{
+                
+                lastX = TrackBuilder.getInstance().getLastX();
+                lastY = TrackBuilder.getInstance().getLastY();
+                
+                t = new TrackElement(STRAIGHT, lastX, lastY, radius, TrackBuilder.getInstance().getLastExitTheta());
+                
             }
             
+            
         }
-
+        
+        
+         TrackPanel.getInstance().drawSingleElement(t);
     }
     
     
+    
+    private void updateFields() {
+
+        entryAngleLabel.setText("Entry \u0398: " + Double.toString(t.getEntryTheta()));
+        exitAngleLabel.setText("Exit \u0398: " + Double.toString(t.getExitTheta()));
+        deltaAngleLabel.setText("Delta \u0398: " + Double.toString(t.getdTheta()));
+        pos0Label.setText("x0: " + Double.toString(Math.round(t.getX0())) + " y0: " + Double.toString(Math.round(t.getY0())));
+        pos1Label.setText("x1: " + Double.toString(Math.round(t.getX1())) + " y1: " + Double.toString(Math.round(t.getY1())));
+        totalTimeLabel.setText("Time: " + Double.toString(TrackBuilder.getInstance().getTime()));
+
+    }
+
 }

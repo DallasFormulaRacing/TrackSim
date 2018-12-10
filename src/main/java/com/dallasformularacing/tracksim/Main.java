@@ -5,7 +5,7 @@
  */
 package com.dallasformularacing.tracksim;
 
-import static com.dallasformularacing.tracksim.trackElementType.*;
+import static com.dallasformularacing.tracksim.TrackElementType.*;
 import com.opencsv.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -34,31 +34,10 @@ class Main {
 
     public static void main(String[] args) {
 
-        //trackBuilder t = new trackBuilder(filename);
-        carPhysics phys = new carPhysics();
-
-        //This is the structure for creating track elements
-        //why does the initial angle start at 180*, you may ask yourself
-        //it just be like that
         
-        /*
-        t.addElement(new trackElement(CURVE, 0, 0, 180, 45, 100));
-        t.addElement(new trackElement(STRAIGHT, t.getLastX(), t.getLastY(), 100, t.getLastExitTheta()));
-        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 45, 100 ));
-        t.addElement(new trackElement(STRAIGHT, t.getLastX(), t.getLastY(), 100, t.getLastExitTheta()));
-        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 45, 100 ));
-        t.addElement(new trackElement(CURVE, t.getLastX(), t.getLastY(), t.getLastExitTheta(), 45, 100 ));
-        */
-        
-        
-        
-        //close I/O when we're done adding elements
-        //t.close();
-        
-        System.out.println("total: " + phys.totalTime());
         
         //base jframe init
-        JFrame frame = new JFrame("Draw Arc Demo");
+        JFrame frame = new JFrame("TrackSim beta");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(960, 640)); 
         

@@ -5,16 +5,19 @@
  */
 package com.dallasformularacing.tracksim;
 
-import static com.dallasformularacing.tracksim.trackElementType.CURVE;
-import static com.dallasformularacing.tracksim.trackElementType.STRAIGHT;
+import static com.dallasformularacing.tracksim.TrackElementType.CURVE;
+import static com.dallasformularacing.tracksim.TrackElementType.STRAIGHT;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import static java.awt.geom.Arc2D.PIE;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,10 +29,10 @@ import javax.swing.JPanel;
  */
 public class TrackPanel extends JPanel {
 
-    private LinkedList<trackElement> elements = new LinkedList();
+    private LinkedList<TrackElement> elements = new LinkedList();
     private Graphics2D g2;
     private double x0, y0, x1, y1, dx, dy = 0;
-    private trackElement singleElement;
+    private TrackElement singleElement;
 
     //Types for singleton 
     private static TrackPanel instance;
@@ -110,12 +113,12 @@ public class TrackPanel extends JPanel {
         g2.drawLine(0, -5, 0, 5);
 
         //Draw all of our track elements
-        for (trackElement t : elements) {
+        for (TrackElement t : elements) {
 
             if (t.getType() == CURVE) {
 
                 g2.draw(t.getArc());
-                g2.draw(t.getBoundingBox());
+                //g2.draw(t.getBoundingBox());
 
             } else if (t.getType() == STRAIGHT) {
 
@@ -130,28 +133,38 @@ public class TrackPanel extends JPanel {
 
         } else {
             if (singleElement.getType() == CURVE) {
-
+                
+                g2.setColor(Color.GREEN);
                 g2.draw(singleElement.getArc());
-                g2.draw(singleElement.getBoundingBox());
+                // b g2.draw(singleElement.getBoundingBox());
+                g2.setColor(Color.red);
+                g2.drawOval((int)Math.round(singleElement.getArc().getStartPoint().getX()) - 5, (int)Math.round(singleElement.getArc().getStartPoint().getY()) - 5, 10, 10);
+                g2.setColor(Color.blue);
+                g2.drawOval((int)Math.round(singleElement.getArc().getEndPoint().getX()) - 5, (int)Math.round(singleElement.getArc().getEndPoint().getY()) - 5, 10, 10);
+                g2.setColor(Color.black);
+                
                 
             } else {
-
+                
+                g2.setColor(Color.GREEN);
+                g2.draw(singleElement.getLine());
+                g2.setColor(Color.black);
             }
         }
 
     }
 
     //Add an element to be drawn
-    public void addElement(trackElement t) {
+    public void addElement(TrackElement t) {
         elements.add(t);
         revalidate();
         repaint();
     }
 
-    public void drawSingleElement(trackElement t) {
-
+    public void drawSingleElement(TrackElement t) {
+        
         singleElement = t;
-        removeAll();
+        this.removeAll();
         revalidate();
         repaint();
 
