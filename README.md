@@ -4,9 +4,7 @@ Program to build and simulate a car going around a race track
 high priority goals
 -----
 
-  Finish implementing live preview (currently only works with curve, currently only a single element. We want to be able to live preview the next element starting at the end of the previous element)
-  
-  Add ability to add track elements to the track ("add" button, LinkedList in trackBuilder class, csv file. May also need to convert trackBuilder to a singleton object for this to work)
+  Polish up the mostly working track building interface
 
 
 medium priority goals
