@@ -323,13 +323,17 @@ public class SidePanel extends JPanel {
     private void createElement() {
 
         double lastX = 0, lastY = 0, thisX, thisY, deltaX = 0, deltaY = 0;
+        TrackElement lastElement;
         
         if(elementState == CURVE){
+            
+            //Some functionality for the reverse button. 
+            
             if (isReversed == false) {
                 if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
                     t = new TrackElement(CURVE, 0, 0, 0, deltaAngle, radius);
                 } else {
-
+ 
                     t = new TrackElement(CURVE, TrackBuilder.getInstance().getLastElement().getX1(), TrackBuilder.getInstance().getLastElement().getY1(),
                             TrackBuilder.getInstance().getLastElement().getExitTheta(), deltaAngle, radius);
                 }
@@ -338,12 +342,39 @@ public class SidePanel extends JPanel {
                 if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
                     t = new TrackElement(CURVE, 0, 0, 180, deltaAngle, radius);
                 } else {
-
+                    
+                    /*
+                    TODO    this code contains a bug
+                            the angle when reversing a curve element is almost correct but
+                            doesn't exactly line up
+                            (just play with the track builder to observe this effect)
+                    */
                     lastX = TrackBuilder.getInstance().getLastX();
                     lastY = TrackBuilder.getInstance().getLastY();
-
-                    t = new TrackElement(CURVE, lastX, lastY,
+                    lastElement = TrackBuilder.getInstance().getLastElement();
+                    
+                    if (lastElement.getExitTheta() > 0 && lastElement.getExitTheta() < 90){
+                        
+                        t = new TrackElement(CURVE, lastX, lastY,
                             270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                        
+                    }else if (lastElement.getExitTheta() > 90 && lastElement.getExitTheta() < 180){
+                        
+                        t = new TrackElement(CURVE, lastX, lastY,
+                            90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                        
+                    }else if (lastElement.getExitTheta() > 180 && lastElement.getExitTheta() < 270){
+                        
+                        t = new TrackElement(CURVE, lastX, lastY,
+                            270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                        
+                    }else if (lastElement.getExitTheta() > 270 && lastElement.getExitTheta() < 360){
+                        
+                        t = new TrackElement(CURVE, lastX, lastY,
+                            90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                        
+                    }
+                    
 
                     thisY = t.getY1();
                     thisX = t.getX1();
@@ -351,13 +382,37 @@ public class SidePanel extends JPanel {
                     deltaX = thisX - lastX;
                     deltaY = thisY - lastY;
 
-                    t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
+                    if (lastElement.getExitTheta() > 0 && lastElement.getExitTheta() < 90){
+                        
+                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
                             270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                        
+                    }else if (lastElement.getExitTheta() > 90 && lastElement.getExitTheta() < 180){
+                        
+                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
+                            90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                        
+                    }else if (lastElement.getExitTheta() > 180 && lastElement.getExitTheta() < 270){
+                        
+                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
+                            270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                        
+                    }else if (lastElement.getExitTheta() > 270 && lastElement.getExitTheta() < 360){
+                        
+                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
+                            90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                        
+                    }
+                    
 
 
                 }
             }
 
+            
+            
+            
+            
         }else if(elementState == STRAIGHT){
             
             if(TrackBuilder.getInstance().getAllElements().isEmpty()){
@@ -378,8 +433,8 @@ public class SidePanel extends JPanel {
          TrackPanel.getInstance().drawSingleElement(t);
     }
     
-    
-    
+   
+      
     private void updateFields() {
 
         entryAngleLabel.setText("Entry \u0398: " + Double.toString(t.getEntryTheta()));
