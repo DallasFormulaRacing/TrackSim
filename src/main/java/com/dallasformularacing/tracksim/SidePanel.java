@@ -353,6 +353,7 @@ public class SidePanel extends JPanel {
                     lastY = TrackBuilder.getInstance().getLastY();
                     lastElement = TrackBuilder.getInstance().getLastElement();
                     
+                    //check for quadrant
                     if (lastElement.getExitTheta() > 0 && lastElement.getExitTheta() < 90){
                         
                         t = new TrackElement(CURVE, lastX, lastY,
@@ -375,13 +376,15 @@ public class SidePanel extends JPanel {
                         
                     }
                     
-
+                    //calculate a delta between the new element and the last element
                     thisY = t.getY1();
                     thisX = t.getX1();
 
                     deltaX = thisX - lastX;
                     deltaY = thisY - lastY;
-
+                    
+                    //calculate final pos of current element based on delta
+                    //(basically we're calculating an element thats almost correct and then adjusting its position to reach the true position).
                     if (lastElement.getExitTheta() > 0 && lastElement.getExitTheta() < 90){
                         
                         t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
