@@ -1,6 +1,12 @@
 # TrackSim
 Program to build and simulate a car going around a race track
 
+bugs
+----
+
+  reverse elements don't work on certain angles of entry (180, 90, 270, 360)
+  reverse elements' entry angles don't quite line up with the previous angle of exit but its close
+
 high priority goals
 -----
 
