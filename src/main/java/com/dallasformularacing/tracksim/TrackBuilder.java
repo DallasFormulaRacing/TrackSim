@@ -6,7 +6,6 @@
 package com.dallasformularacing.tracksim;
 
 
-import com.opencsv.CSVIterator;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import java.io.File;
@@ -15,11 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

@@ -43,9 +43,9 @@ public class SidePanel extends JPanel {
 
     private double radius, deltaAngle = 0;
     private boolean isReversed = false;
-    
+
     private TrackElementType elementState = CURVE;
-    
+
     public SidePanel(int width, int height) {
 
         //this panel will use a box layout (items ordered vertically)
@@ -58,15 +58,12 @@ public class SidePanel extends JPanel {
         javax.swing.border.Border b = BorderFactory.createLineBorder(Color.DARK_GRAY);
         this.setBorder(b);
         this.setBackground(Color.LIGHT_GRAY);
-        
-        
-        
-         /*
+
+        /*
         *-----------------------
         *CODE FOR RADIUS CONTROLS
         *-----------------------
-        */
-         
+         */
         //add label for radius slider
         radiusLabel = new JLabel();
         radiusLabel.setText("Radius");
@@ -90,7 +87,7 @@ public class SidePanel extends JPanel {
             JSlider src = (JSlider) e.getSource();
             radius = src.getValue();
             radiusField.setText(Integer.toString(src.getValue()));
-            
+
             //render the element in TrackPanel
             createElement();
             updateFields();
@@ -108,25 +105,21 @@ public class SidePanel extends JPanel {
 
                 JTextField src = (JTextField) e.getSource();
                 radiusSlider.setValue(Integer.parseInt(src.getText()));
-                
-                createElement();            
+
+                createElement();
                 updateFields();
             }
         });
         this.add(radiusField);
 
-        
-        
         //a spacer
         this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
 
-        
-        
         /*
         *-----------------------
         *CODE FOR ANGLE CONTROLS
         *-----------------------
-        */
+         */
         //add label for angle
         angleLabel = new JLabel();
         angleLabel.setText("Angle");
@@ -172,23 +165,19 @@ public class SidePanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JTextField src = (JTextField) e.getSource();
                 angleSlider.setValue(Integer.parseInt(src.getText()));
-                
-                createElement();            
+
+                createElement();
                 updateFields();
             }
         });
 
-     
         this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
-        
-        
-        
-        
-         /*
+
+        /*
         *-----------------------
         *CODE FOR RADIO BUTTONS
         *-----------------------
-        */
+         */
         //radio buttons
         typeButtons = new ButtonGroup();
 
@@ -202,39 +191,40 @@ public class SidePanel extends JPanel {
 
         typeButtons.add(straightRButton);
         typeButtons.add(curveRButton);
-        
+
         //some listeners
         curveRButton.addActionListener((ActionEvent e) -> {
-           elementState = CURVE;
-           radiusLabel.setText("Radius");
-           
-            createElement();            
+            elementState = CURVE;
+            radiusLabel.setText("Radius");
+            
+            radiusSlider.setMinimum(0);
+            radiusSlider.setMaximum(1000);
+            
+            createElement();
             updateFields();
         });
-        
-        straightRButton.addActionListener((ActionEvent e) ->{
+
+        straightRButton.addActionListener((ActionEvent e) -> {
             elementState = STRAIGHT;
             radiusLabel.setText("Length");
             
-            createElement();            
+            radiusSlider.setMinimum(-500);
+            radiusSlider.setMaximum(500);
+            
+            createElement();
             updateFields();
         });
-        
+
         this.add(straightRButton);
         this.add(curveRButton);
 
-        
-        
-        
         this.add(new Spacer(this.getPreferredSize().width, 25, this.getBackground()));
 
-        
-        
         /*
         *-----------------------
         *CODE FOR REVERSE BUTTON
         *-----------------------
-        */
+         */
         //reverse button
         reverseButton = new JToggleButton();
         reverseButton.setText("Reverse");
@@ -244,72 +234,78 @@ public class SidePanel extends JPanel {
             } else {
                 isReversed = false;
             }
-            
+
             createElement();
             updateFields();
         });
         this.add(reverseButton);
-        
-        
-        
+
         this.add(new Spacer(this.getPreferredSize().width, 10, this.getBackground()));
-        
-        
-        
+
         /*
         *-----------------------
         *CODE FOR ADD BUTTON
         *-----------------------
-        */
+         */
         //add button
         addButton = new JButton();
         addButton.setText("Add");
 
         //add button listener
         addButton.addActionListener((ActionEvent e) -> {
+
+            //swap start points and end points if the element is reversed
+            //this is needed for reasons
+            if (isReversed == true) {
+                double tmpX, tmpY, tmpTheta;
+                tmpX = t.getX1();
+                tmpY = t.getY1();
+                t.setX1(t.getX0());
+                t.setY1(t.getY0());
+                t.setX0(tmpX);
+                t.setY0(tmpY);
+
+                tmpTheta = t.getEntryTheta();
+                t.setEntryTheta(t.getExitTheta());
+                t.setExitTheta(tmpTheta);
+
+            }
+
             TrackPanel.getInstance().addElement(t);
             TrackBuilder.getInstance().addElement(t);
-            
+
             createElement();
             updateFields();
         });
 
         this.add(addButton);
-        
-        
-        
+
         this.add(new Spacer(this.getPreferredSize().width, 10, this.getBackground()));
-         
-        
-        
+
         finishButton = new JButton();
         finishButton.setText("Finish");
-        finishButton.addActionListener((ActionEvent e) ->{
-        
+        finishButton.addActionListener((ActionEvent e) -> {
+
             TrackBuilder.getInstance().close();
-        
+
         });
-        
+
         this.add(finishButton);
-        
-        
-        
+
         this.add(new Spacer(this.getPreferredSize().width, 10, this.getBackground()));
-        
-        
-        
+
         /*
         *-----------------------
         *CODE FOR DIAGNOSTIC INFO
         *-----------------------
-        */
+         */
         entryAngleLabel = new JLabel("Entry \u0398: -");
         exitAngleLabel = new JLabel("Exit \u0398: -");
         deltaAngleLabel = new JLabel("Delta \u0398: -");
         pos0Label = new JLabel("x0: - y0: -");
         pos1Label = new JLabel("x1: - y1: -");
         totalTimeLabel = new JLabel("Time: -");
-        
+
         this.add(entryAngleLabel);
         this.add(exitAngleLabel);
         this.add(deltaAngleLabel);
@@ -317,127 +313,117 @@ public class SidePanel extends JPanel {
         this.add(pos1Label);
         this.add(totalTimeLabel);
     }
-    
-    
-    
+
     private void createElement() {
 
         double lastX = 0, lastY = 0, thisX, thisY, deltaX = 0, deltaY = 0;
         TrackElement lastElement;
-        
-        if(elementState == CURVE){
-            
-            //Some functionality for the reverse button. 
-            
+
+        if (elementState == CURVE) {
+
             if (isReversed == false) {
                 if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
                     t = new TrackElement(CURVE, 0, 0, 0, deltaAngle, radius);
                 } else {
- 
+
                     t = new TrackElement(CURVE, TrackBuilder.getInstance().getLastElement().getX1(), TrackBuilder.getInstance().getLastElement().getY1(),
                             TrackBuilder.getInstance().getLastElement().getExitTheta(), deltaAngle, radius);
                 }
 
+            //if element is reversed
+            /*
+                TODO    this code contains a bug
+                        the angle when reversing a curve element is almost correct but
+                        doesn't exactly line up
+                        (just play with the track builder to observe this effect)
+             */
+            
             } else {
                 if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
                     t = new TrackElement(CURVE, 0, 0, 180, deltaAngle, radius);
                 } else {
-                    
-                    /*
-                    TODO    this code contains a bug
-                            the angle when reversing a curve element is almost correct but
-                            doesn't exactly line up
-                            (just play with the track builder to observe this effect)
-                    */
+
                     lastX = TrackBuilder.getInstance().getLastX();
                     lastY = TrackBuilder.getInstance().getLastY();
                     lastElement = TrackBuilder.getInstance().getLastElement();
-                    
+
                     //check for quadrant
-                    if (lastElement.getExitTheta() > 0 && lastElement.getExitTheta() < 90){
-                        
+                    //and create initial element
+                    //this isn't the final element but is used as a starting point to calculate a delta
+                    if (Math.abs(lastElement.getExitTheta()) > 0 && Math.abs(lastElement.getExitTheta()) < 90) {
+
                         t = new TrackElement(CURVE, lastX, lastY,
-                            270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
-                        
-                    }else if (lastElement.getExitTheta() > 90 && lastElement.getExitTheta() < 180){
-                        
+                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+
+                    } else if (Math.abs(lastElement.getExitTheta()) > 90 && Math.abs(lastElement.getExitTheta()) < 180) {
+
                         t = new TrackElement(CURVE, lastX, lastY,
-                            90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
-                        
-                    }else if (lastElement.getExitTheta() > 180 && lastElement.getExitTheta() < 270){
-                        
+                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+
+                    } else if (Math.abs(lastElement.getExitTheta()) > 180 && Math.abs(lastElement.getExitTheta()) < 270) {
+
                         t = new TrackElement(CURVE, lastX, lastY,
-                            270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
-                        
-                    }else if (lastElement.getExitTheta() > 270 && lastElement.getExitTheta() < 360){
-                        
+                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+
+                    } else if (Math.abs(lastElement.getExitTheta()) > 270 && Math.abs(lastElement.getExitTheta()) < 360) {
+
                         t = new TrackElement(CURVE, lastX, lastY,
-                            90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
-                        
+                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+
                     }
-                    
+
                     //calculate a delta between the new element and the last element
                     thisY = t.getY1();
                     thisX = t.getX1();
 
                     deltaX = thisX - lastX;
                     deltaY = thisY - lastY;
-                    
+
                     //calculate final pos of current element based on delta
                     //(basically we're calculating an element thats almost correct and then adjusting its position to reach the true position).
-                    if (lastElement.getExitTheta() > 0 && lastElement.getExitTheta() < 90){
-                        
-                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                            270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
-                        
-                    }else if (lastElement.getExitTheta() > 90 && lastElement.getExitTheta() < 180){
-                        
-                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                            90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
-                        
-                    }else if (lastElement.getExitTheta() > 180 && lastElement.getExitTheta() < 270){
-                        
-                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                            270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
-                        
-                    }else if (lastElement.getExitTheta() > 270 && lastElement.getExitTheta() < 360){
-                        
-                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                            90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
-                        
-                    }
-                    
+                    if (Math.abs(lastElement.getExitTheta()) > 0 && Math.abs(lastElement.getExitTheta()) < 90) {
 
+                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
+                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+
+                    } else if (Math.abs(lastElement.getExitTheta()) > 90 && Math.abs(lastElement.getExitTheta()) < 180) {
+
+                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
+                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+
+                    } else if (Math.abs(lastElement.getExitTheta()) > 180 && Math.abs(lastElement.getExitTheta()) < 270) {
+
+                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
+                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+
+                    } else if (Math.abs(lastElement.getExitTheta()) > 270 && Math.abs(lastElement.getExitTheta()) < 360) {
+
+                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
+                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+
+                    }
 
                 }
             }
 
-            
-            
-            
-            
-        }else if(elementState == STRAIGHT){
-            
-            if(TrackBuilder.getInstance().getAllElements().isEmpty()){
-                
-            }else{
-                
+        } else if (elementState == STRAIGHT) {
+
+            if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
+
+            } else {
+
                 lastX = TrackBuilder.getInstance().getLastX();
                 lastY = TrackBuilder.getInstance().getLastY();
-                
+
                 t = new TrackElement(STRAIGHT, lastX, lastY, radius, TrackBuilder.getInstance().getLastExitTheta());
-                
+
             }
-            
-            
+
         }
-        
-        
-         TrackPanel.getInstance().drawSingleElement(t);
+
+        TrackPanel.getInstance().drawSingleElement(t);
     }
-    
-   
-      
+
     private void updateFields() {
 
         entryAngleLabel.setText("Entry \u0398: " + Double.toString(t.getEntryTheta()));

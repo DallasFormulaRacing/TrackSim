@@ -20,6 +20,10 @@ public class TrackElement {
     private TrackElementType type;
     private double x0, y0, x1, y1, dx, dy, entryTheta, dTheta, exitTheta, radius, length, time;
 
+    
+
+    
+
    
     private Arc2D arc;
     private Line2D line = new Line2D.Double();
@@ -93,7 +97,6 @@ public class TrackElement {
     }
 
     
-    //bunch of getter functions
     public String[] getData() {
 
         String[] s = {type.toString(), Double.toString(x0), Double.toString(y0), Double.toString(x1), Double.toString(y1), Double.toString(entryTheta), 
@@ -160,6 +163,31 @@ public class TrackElement {
         
      }
      
+     public void setX0(double x0) {
+        this.x0 = x0;
+    }
+
+    public void setY0(double y0) {
+        this.y0 = y0;
+    }
+
+    public void setX1(double x1) {
+        this.x1 = x1;
+    }
+
+    public void setY1(double y1) {
+        this.y1 = y1;
+    }
+    
+    public void setEntryTheta(double entryTheta) {
+        this.entryTheta = entryTheta;
+    }
+
+    public void setExitTheta(double exitTheta) {
+        this.exitTheta = exitTheta;
+    }
+    
+    
      public Line2D getLine(){
          return line;
      }

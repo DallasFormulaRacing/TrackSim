@@ -136,7 +136,6 @@ public class TrackPanel extends JPanel {
                 
                 g2.setColor(Color.GREEN);
                 g2.draw(singleElement.getArc());
-                // b g2.draw(singleElement.getBoundingBox());
                 g2.setColor(Color.red);
                 g2.drawOval((int)Math.round(singleElement.getArc().getStartPoint().getX()) - 5, (int)Math.round(singleElement.getArc().getStartPoint().getY()) - 5, 10, 10);
                 g2.setColor(Color.blue);
