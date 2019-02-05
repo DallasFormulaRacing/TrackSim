@@ -7,6 +7,8 @@ bugs
   reverse elements don't work on certain angles of entry (180, 90, 270, 360)
   
   reverse elements' entry angles don't quite line up with the previous angle of exit but its close
+  
+  time can be negative (just make it an absolute value)
 
 high priority goals
 -----
