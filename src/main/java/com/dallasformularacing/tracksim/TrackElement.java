@@ -88,7 +88,7 @@ public class TrackElement {
         this.type = t;  
         this.radius = radius;
         this.length = 2 * Math.PI * radius * (dTheta / 360);
-        this.time = CarPhysics.elementTime(this);
+        this.time = Math.abs(CarPhysics.elementTime(this));
         
         this.arc.setArc(this.x0 - dx, this.y0 - radius - dy, this.radius * 2, this.radius * 2, this.entryTheta, this.dTheta, OPEN);
         

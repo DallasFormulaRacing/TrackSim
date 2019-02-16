@@ -5,23 +5,9 @@
  */
 package com.dallasformularacing.tracksim;
 
-import static com.dallasformularacing.tracksim.TrackElementType.*;
-import com.opencsv.*;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FilePermission;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Reader;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 import javax.swing.WindowConstants;
 
 /**
@@ -49,11 +35,7 @@ class Main {
         
         SidePanel controls = new SidePanel(frame.getPreferredSize().width / 5, frame.getPreferredSize().height);
         
-        
-        //add elements to the panel for drawing
-        
-  
-        
+          
         mainPanel.add(TrackPanel.getInstance(), BorderLayout.CENTER);
         mainPanel.add(controls, BorderLayout.EAST);
         

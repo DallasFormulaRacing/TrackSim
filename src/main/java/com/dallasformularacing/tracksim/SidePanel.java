@@ -254,9 +254,9 @@ public class SidePanel extends JPanel {
         //add button listener
         addButton.addActionListener((ActionEvent e) -> {
 
-            //swap start points and end points if the element is reversed
+            //swap start points and end points if the element is reversed and a curve
             //this is needed for reasons
-            if (isReversed == true) {
+            if (isReversed == true && t.getType() == CURVE) {
                 double tmpX, tmpY, tmpTheta;
                 tmpX = t.getX1();
                 tmpY = t.getY1();
@@ -316,7 +316,7 @@ public class SidePanel extends JPanel {
 
     private void createElement() {
 
-        double lastX = 0, lastY = 0, thisX, thisY, deltaX = 0, deltaY = 0;
+        double lastX = 0, lastY = 0, thisX, thisY, deltaX = 0, deltaY = 0, exitTheta = 0;
         TrackElement lastElement;
 
         if (elementState == CURVE) {
@@ -350,25 +350,29 @@ public class SidePanel extends JPanel {
                     //check for quadrant
                     //and create initial element
                     //this isn't the final element but is used as a starting point to calculate a delta
-                    if (Math.abs(lastElement.getExitTheta()) > 0 && Math.abs(lastElement.getExitTheta()) < 90) {
+                    
+                    exitTheta = convertAngle(lastElement.getExitTheta());
+                    
+                   
+                    if (exitTheta > 0 && exitTheta < 90) {
 
                         t = new TrackElement(CURVE, lastX, lastY,
-                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                270 - exitTheta - deltaAngle, deltaAngle, radius);
 
-                    } else if (Math.abs(lastElement.getExitTheta()) > 90 && Math.abs(lastElement.getExitTheta()) < 180) {
-
-                        t = new TrackElement(CURVE, lastX, lastY,
-                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
-
-                    } else if (Math.abs(lastElement.getExitTheta()) > 180 && Math.abs(lastElement.getExitTheta()) < 270) {
+                    } else if (exitTheta > 90 && exitTheta < 180) {
 
                         t = new TrackElement(CURVE, lastX, lastY,
-                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                90 - exitTheta - deltaAngle, deltaAngle, radius);
 
-                    } else if (Math.abs(lastElement.getExitTheta()) > 270 && Math.abs(lastElement.getExitTheta()) < 360) {
+                    } else if (exitTheta > 180 && exitTheta < 270) {
 
                         t = new TrackElement(CURVE, lastX, lastY,
-                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                270 - exitTheta - deltaAngle, deltaAngle, radius);
+
+                    } else if (exitTheta > 270 && exitTheta < 360) {
+
+                        t = new TrackElement(CURVE, lastX, lastY,
+                                90 - exitTheta - deltaAngle, deltaAngle, radius);
 
                     }
 
@@ -381,27 +385,31 @@ public class SidePanel extends JPanel {
 
                     //calculate final pos of current element based on delta
                     //(basically we're calculating an element thats almost correct and then adjusting its position to reach the true position).
-                    if (Math.abs(lastElement.getExitTheta()) > 0 && Math.abs(lastElement.getExitTheta()) < 90) {
+                    if (exitTheta > 0 && exitTheta < 90) {
 
                         t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                270 - exitTheta - deltaAngle, deltaAngle, radius);
 
-                    } else if (Math.abs(lastElement.getExitTheta()) > 90 && Math.abs(lastElement.getExitTheta()) < 180) {
-
-                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
-
-                    } else if (Math.abs(lastElement.getExitTheta()) > 180 && Math.abs(lastElement.getExitTheta()) < 270) {
+                    } else if (exitTheta > 90 && exitTheta < 180) {
 
                         t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                90 - exitTheta - deltaAngle, deltaAngle, radius);
 
-                    } else if (Math.abs(lastElement.getExitTheta()) > 270 && Math.abs(lastElement.getExitTheta()) < 360) {
+                    } else if (exitTheta > 180 && exitTheta < 270) {
 
                         t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                270 - exitTheta - deltaAngle, deltaAngle, radius);
 
+                    } else if (exitTheta > 270 && exitTheta < 360) {
+
+                        t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
+                                90 - exitTheta - deltaAngle, deltaAngle, radius);
+                                     
                     }
+                    
+                    //limit angle to 0 - 360
+                    t.setEntryTheta(convertAngle(t.getEntryTheta()));
+                    t.setExitTheta(convertAngle(t.getExitTheta()));
 
                 }
             }
@@ -433,6 +441,31 @@ public class SidePanel extends JPanel {
         pos1Label.setText("x1: " + Double.toString(Math.round(t.getX1())) + " y1: " + Double.toString(Math.round(t.getY1())));
         totalTimeLabel.setText("Time: " + Double.toString(TrackBuilder.getInstance().getTime()));
 
+    }
+    
+    
+    //constrain angles to 0 < theta < 360
+    private double convertAngle(double angle){
+        
+        double a = angle;
+        
+        if(angle < 0){
+            return 360 + angle;
+        }
+        
+        if(angle > 360){
+            
+            while(a > 360){
+                
+                a = a - 360;
+            } 
+            
+            return a;
+            
+        }
+  
+        return angle;
+        
     }
 
 }
