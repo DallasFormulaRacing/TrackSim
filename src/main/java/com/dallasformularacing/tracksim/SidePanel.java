@@ -10,8 +10,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -270,6 +268,8 @@ public class SidePanel extends JPanel {
                 t.setExitTheta(tmpTheta);
 
             }
+            
+           
 
             TrackPanel.getInstance().addElement(t);
             TrackBuilder.getInstance().addElement(t);
@@ -316,11 +316,13 @@ public class SidePanel extends JPanel {
 
     private void createElement() {
 
-        double lastX = 0, lastY = 0, thisX, thisY, deltaX = 0, deltaY = 0;
+        double lastX = 0, lastY = 0, thisX, thisY, deltaX = 0, deltaY = 0, deltaTheta = 0;
         TrackElement lastElement;
 
         if (elementState == CURVE) {
-
+            
+            
+            
             if (isReversed == false) {
                 if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
                     t = new TrackElement(CURVE, 0, 0, 0, deltaAngle, radius);
@@ -353,56 +355,81 @@ public class SidePanel extends JPanel {
                     if (Math.abs(lastElement.getExitTheta()) > 0 && Math.abs(lastElement.getExitTheta()) < 90) {
 
                         t = new TrackElement(CURVE, lastX, lastY,
-                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                270 - lastElement.getExitTheta() - deltaAngle, deltaAngle, radius);
 
                     } else if (Math.abs(lastElement.getExitTheta()) > 90 && Math.abs(lastElement.getExitTheta()) < 180) {
 
                         t = new TrackElement(CURVE, lastX, lastY,
-                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                90 - lastElement.getExitTheta() - deltaAngle, deltaAngle, radius);
 
                     } else if (Math.abs(lastElement.getExitTheta()) > 180 && Math.abs(lastElement.getExitTheta()) < 270) {
 
                         t = new TrackElement(CURVE, lastX, lastY,
-                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                270 - lastElement.getExitTheta() - deltaAngle, deltaAngle, radius);
 
                     } else if (Math.abs(lastElement.getExitTheta()) > 270 && Math.abs(lastElement.getExitTheta()) < 360) {
 
                         t = new TrackElement(CURVE, lastX, lastY,
-                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                90 - lastElement.getExitTheta() - deltaAngle, deltaAngle, radius);
 
                     }
+                    
+                    //calculate delta between exit angles
+                    deltaTheta = 180 - (t.getExitTheta() - lastElement.getExitTheta());
 
-                    //calculate a delta between the new element and the last element
+                    
+                    //calculate new track element with the correct angle of entry
+                    if (Math.abs(lastElement.getExitTheta()) > 0 && Math.abs(lastElement.getExitTheta()) < 90) {
+
+                        t = new TrackElement(CURVE, lastX, lastY,
+                                270 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
+
+                    } else if (Math.abs(lastElement.getExitTheta()) > 90 && Math.abs(lastElement.getExitTheta()) < 180) {
+
+                        t = new TrackElement(CURVE, lastX, lastY,
+                                90 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
+
+                    } else if (Math.abs(lastElement.getExitTheta()) > 180 && Math.abs(lastElement.getExitTheta()) < 270) {
+
+                        t = new TrackElement(CURVE, lastX , lastY ,
+                                270 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
+
+                    } else if (Math.abs(lastElement.getExitTheta()) > 270 && Math.abs(lastElement.getExitTheta()) < 360) {
+
+                        t = new TrackElement(CURVE, lastX , lastY,
+                                90 - lastElement.getExitTheta() - deltaAngle + deltaTheta , deltaAngle, radius);
+                    }    
+                    
+                    //calculate delta between coordinates of this element and last element
                     thisY = t.getY1();
                     thisX = t.getX1();
 
                     deltaX = thisX - lastX;
                     deltaY = thisY - lastY;
-
-                    //calculate final pos of current element based on delta
-                    //(basically we're calculating an element thats almost correct and then adjusting its position to reach the true position).
+                    
+                    
+                    //calculate final track element with proper angle and coordinates
                     if (Math.abs(lastElement.getExitTheta()) > 0 && Math.abs(lastElement.getExitTheta()) < 90) {
 
                         t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                270 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
 
                     } else if (Math.abs(lastElement.getExitTheta()) > 90 && Math.abs(lastElement.getExitTheta()) < 180) {
 
                         t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                90 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
 
                     } else if (Math.abs(lastElement.getExitTheta()) > 180 && Math.abs(lastElement.getExitTheta()) < 270) {
 
                         t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                                270 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                270 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
 
                     } else if (Math.abs(lastElement.getExitTheta()) > 270 && Math.abs(lastElement.getExitTheta()) < 360) {
 
                         t = new TrackElement(CURVE, lastX - deltaX, lastY - deltaY,
-                                90 - TrackBuilder.getInstance().getLastElement().getExitTheta() - deltaAngle, deltaAngle, radius);
+                                90 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
 
                     }
-
                 }
             }
 
