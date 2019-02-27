@@ -35,11 +35,7 @@ class Main {
         
         SidePanel controls = new SidePanel(frame.getPreferredSize().width / 5, frame.getPreferredSize().height);
         
-        
-        //add elements to the panel for drawing
-        
-  
-        
+          
         mainPanel.add(TrackPanel.getInstance(), BorderLayout.CENTER);
         mainPanel.add(controls, BorderLayout.EAST);
         
