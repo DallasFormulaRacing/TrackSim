@@ -332,14 +332,7 @@ public class SidePanel extends JPanel {
                             TrackBuilder.getInstance().getLastElement().getExitTheta(), deltaAngle, radius);
                 }
 
-            //if element is reversed
-            /*
-                TODO    this code contains a bug
-                        the angle when reversing a curve element is almost correct but
-                        doesn't exactly line up
-                        (just play with the track builder to observe this effect)
-             */
-            
+            //if element is reversed          
             } else {
                 if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
                     t = new TrackElement(CURVE, 0, 0, 180, deltaAngle, radius);
@@ -379,12 +372,12 @@ public class SidePanel extends JPanel {
 
                     
                     //calculate new track element with the correct angle of entry
-                    if (Math.abs(lastElement.getExitTheta()) > 0 && Math.abs(lastElement.getExitTheta()) < 90) {
+                    if (Math.abs(lastElement.getExitTheta()) >= 0 && Math.abs(lastElement.getExitTheta()) < 90) {
 
                         t = new TrackElement(CURVE, lastX, lastY,
                                 270 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
 
-                    } else if (Math.abs(lastElement.getExitTheta()) > 90 && Math.abs(lastElement.getExitTheta()) < 180) {
+                    } else if (Math.abs(lastElement.getExitTheta()) >= 90 && Math.abs(lastElement.getExitTheta()) < 180) {
 
                         t = new TrackElement(CURVE, lastX, lastY,
                                 90 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
