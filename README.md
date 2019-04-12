@@ -5,9 +5,7 @@ bugs
 ----
 
   reverse elements don't work on certain angles of entry (180, 90, 270, 360)
-  
-  reverse elements' entry angles don't quite line up with the previous angle of exit but its close
-  
+    
   time can be negative (just make it an absolute value)
 
 high priority goals
@@ -15,7 +13,7 @@ high priority goals
 
   calculate braking distances and maybe some other broad useful values
   
-  create fork for electric car
+  simulate weight transfer / suspemsion geometry / tires
 
 
 medium priority goals
@@ -26,6 +24,5 @@ make gui more useful (toolbar? zoom in/out? make it look nice and not broken?
 
 low priority goals
 -----
--make a nice gui with resizing and panning around the map 
 
 -read in a CSV file of GPS coordinates and generate a map based on that
