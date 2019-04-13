@@ -25,7 +25,7 @@ class Main {
         //base jframe init
         JFrame frame = new JFrame("TrackSim beta");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(960, 640)); 
+        frame.setPreferredSize(new Dimension(1600, 900)); 
         
         //initialize all our componenets
         ParentPanel mainPanel = new ParentPanel();

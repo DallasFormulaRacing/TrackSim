@@ -8,6 +8,8 @@ package com.dallasformularacing.tracksim;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import java.awt.geom.Line2D;
+import java.awt.geom.PathIterator;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -31,6 +33,9 @@ public class TrackBuilder {
     private static TrackBuilder instance;
     private static boolean instanceExists = false;
     private double time = 0;
+    private double x_end, y_end;
+
+    
     
     /**
      * Constructor
@@ -110,9 +115,20 @@ public class TrackBuilder {
         return elements;
     }
     
-
+    
+    public TrackElement[] toArray(){
+        TrackElement[] t = new TrackElement[elements.size()];
+        elements.toArray(t);
+        return t;
+    }
+    
     //close the file I/O
     public void close() {
+        
+        
+        
+        
+        
         try {
             csvr.close();
             csvw.close();
@@ -139,5 +155,7 @@ public class TrackBuilder {
     public double getTime(){
         return time;
     }
+    
+  
 
 }
