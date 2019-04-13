@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Arc2D;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -284,10 +285,40 @@ public class SidePanel extends JPanel {
 
         finishButton = new JButton();
         finishButton.setText("Finish");
-        finishButton.addActionListener((ActionEvent e) -> {
-
-            TrackBuilder.getInstance().close();
-
+        finishButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                TrackBuilder.getInstance().close();
+                
+                TrackElement elementArr[] = TrackBuilder.getInstance().toArray();
+                
+                int index = 0;
+                
+                while(index < elementArr.length - 1){
+                    
+                    //if we have a straight followed by a curve, calculate the braking distance in the straight
+                    if(elementArr[index].getType() == STRAIGHT && elementArr[index+1].getType() == CURVE){
+                        TrackElement curve = elementArr[index+1];
+                        TrackElement straight = elementArr[index];
+                        
+                        straight.partitionLine(straight.getLine());
+                        
+                        double vFinal = curve.getvFin();
+                        double vNot = straight.getvFin();
+                        System.out.println();
+                        System.out.println("braking distance: " + CarPhysics.getBrakingDistance(vFinal, vNot, straight));
+       
+                    }
+                    if(elementArr[index].getType() == CURVE){
+                        
+                        Arc2D a = new Arc2D.Double();
+                        
+                    }
+                    
+                    index++;
+                }
+                
+            }
         });
 
         this.add(finishButton);

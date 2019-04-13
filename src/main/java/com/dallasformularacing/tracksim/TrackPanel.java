@@ -10,8 +10,10 @@ import static com.dallasformularacing.tracksim.TrackElementType.STRAIGHT;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
@@ -25,14 +27,17 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author Josh THIS CLASS IS TO BE USED AS A SINGLETON OBJECT
+ * @author Josh 
+ * THIS CLASS IS TO BE USED AS A SINGLETON OBJECT
  */
-public class TrackPanel extends JPanel {
+public class TrackPanel extends JPanel implements MouseListener, MouseMotionListener{
 
     private LinkedList<TrackElement> elements = new LinkedList();
     private Graphics2D g2;
     private double x0, y0, x1, y1, dx, dy = 0;
-    private TrackElement singleElement;
+    private TrackElement previewElement;
+    private TrackElement selectedElement;
+    
 
     //Types for singleton 
     private static TrackPanel instance;
@@ -44,48 +49,17 @@ public class TrackPanel extends JPanel {
      */
     private TrackPanel() {
 
-        //Mouse movement listener for panning action
-        this.addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-
-                if (x0 == 0 && y0 == 0 && x1 == 0 && y1 == 0) {
-                    x0 = e.getX();
-                    y0 = e.getY();
-                } else if (x0 != 0 && y0 != 0 && x1 == 0 && y1 == 0) {
-                    x1 = e.getX();
-                    y1 = e.getY();
-                } else if (x0 != 0 && y0 != 0 && x1 != 0 && y1 != 0) {
-
-                    dx = dx + 3 * (x1 - x0);
-                    dy = dy + 3 * (y1 - y0);
-
-                    //System.out.println("dx: " + dx + " dy: " + dy);
-                    revalidate();
-                    repaint();
-
-                    x0 = 0;
-                    y0 = 0;
-                    x1 = 0;
-                    y1 = 0;
-
-                }
-
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(TrackPanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-
-            }
-        });
+        
+        this.addMouseMotionListener(this);
+        this.addMouseListener(this);
+        this.setBackground(Color.GRAY);
     }
+    
+    
+   
 
+    
+    
     /**
      * Paint method override for this panel
      *
@@ -112,16 +86,17 @@ public class TrackPanel extends JPanel {
         g2.drawLine(-5, 0, 5, 0);
         g2.drawLine(0, -5, 0, 5);
 
-        //Draw all of our track elements
+        //Draw all of the elements that have been added
         for (TrackElement t : elements) {
 
             if (t.getType() == CURVE) {
-
+                g2.setColor(Color.ORANGE);
                 g2.draw(t.getArc());
                 //g2.draw(t.getBoundingBox());
 
             } else if (t.getType() == STRAIGHT) {
-
+                
+                g2.setColor(Color.BLACK);
                 g2.draw(new Line2D.Double(t.getX0(), t.getY0(), t.getX1(), t.getY1()));
 
             }
@@ -129,26 +104,48 @@ public class TrackPanel extends JPanel {
 
         //This is for drawing a single element
         //(live preview)
-        if (singleElement == null) {
+        if (previewElement == null) {
 
         } else {
-            if (singleElement.getType() == CURVE) {
+            if (previewElement.getType() == CURVE) {
                 
                 g2.setColor(Color.GREEN);
-                g2.draw(singleElement.getArc());
+                g2.draw(previewElement.getArc());
                 g2.setColor(Color.red);
-                g2.drawOval((int)Math.round(singleElement.getArc().getStartPoint().getX()) - 5, (int)Math.round(singleElement.getArc().getStartPoint().getY()) - 5, 10, 10);
+                g2.drawOval((int)Math.round(previewElement.getArc().getStartPoint().getX()) - 5, (int)Math.round(previewElement.getArc().getStartPoint().getY()) - 5, 10, 10);
                 g2.setColor(Color.blue);
-                g2.drawOval((int)Math.round(singleElement.getArc().getEndPoint().getX()) - 5, (int)Math.round(singleElement.getArc().getEndPoint().getY()) - 5, 10, 10);
+                g2.drawOval((int)Math.round(previewElement.getArc().getEndPoint().getX()) - 5, (int)Math.round(previewElement.getArc().getEndPoint().getY()) - 5, 10, 10);
                 g2.setColor(Color.black);
                 
                 
             } else {
                 
                 g2.setColor(Color.GREEN);
-                g2.draw(singleElement.getLine());
+                g2.draw(previewElement.getLine());
                 g2.setColor(Color.black);
             }
+        }
+        
+        //this is for the currently selected element
+        if(selectedElement != null){
+            if (selectedElement.getType() == CURVE) {
+                
+                g2.setColor(Color.ORANGE);
+                g2.draw(selectedElement.getArc());
+                g2.setColor(Color.RED);
+                g2.draw(selectedElement.getBoundingBox());
+                g2.setColor(Color.BLACK);
+
+                
+            } else {
+                
+                g2.setColor(Color.BLACK);
+                g2.draw(selectedElement.getLine());
+                g2.setColor(Color.RED);
+                g2.draw(selectedElement.getBoundingBox());
+                g2.setColor(Color.BLACK);
+            }
+            
         }
 
     }
@@ -162,7 +159,7 @@ public class TrackPanel extends JPanel {
 
     public void drawSingleElement(TrackElement t) {
         
-        singleElement = t;
+        previewElement = t;
         this.removeAll();
         revalidate();
         repaint();
@@ -181,6 +178,76 @@ public class TrackPanel extends JPanel {
         } else {
             return instance;
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        
+        for(TrackElement t : elements){
+            
+            if(t.getBoundingBox().contains(e.getX() - super.getWidth()/2, e.getY() - super.getHeight()/2)){
+                selectedElement = t;
+                removeAll();
+                revalidate();
+                repaint();
+                
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+            }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+       
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (x0 == 0 && y0 == 0 && x1 == 0 && y1 == 0) {
+                    x0 = e.getX();
+                    y0 = e.getY();
+                } else if (x0 != 0 && y0 != 0 && x1 == 0 && y1 == 0) {
+                    x1 = e.getX();
+                    y1 = e.getY();
+                } else if (x0 != 0 && y0 != 0 && x1 != 0 && y1 != 0) {
+
+                    dx = dx + 3 * (x1 - x0);
+                    dy = dy + 3 * (y1 - y0);
+
+                    //System.out.println("dx: " + dx + " dy: " + dy);
+                    revalidate();
+                    repaint();
+
+                    x0 = 0;
+                    y0 = 0;
+                    x1 = 0;
+                    y1 = 0;
+
+                }
+
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(TrackPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        
     }
 
 }
