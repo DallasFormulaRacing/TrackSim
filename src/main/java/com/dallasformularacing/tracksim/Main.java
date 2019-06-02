@@ -43,8 +43,6 @@ class Main {
         frame.add(mainPanel);
         frame.pack();
         frame.setVisible(true);
-
-        //add frame contents
         
         
         

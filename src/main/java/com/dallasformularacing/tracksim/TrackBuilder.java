@@ -33,7 +33,6 @@ public class TrackBuilder {
     private static TrackBuilder instance;
     private static boolean instanceExists = false;
     private double time = 0;
-    private double x_end, y_end;
 
     
     
@@ -81,6 +80,14 @@ public class TrackBuilder {
         csvw.writeNext(e.getData());
     }
     
+    
+    public void addDynamics(double x, double vel){
+        String[] data = new String[2];
+        data[0] = Double.toString(x);
+        data[1] = Double.toString(vel);
+        csvw.writeNext(data);
+    }
+    
     //TODO: make this function work
     public boolean isTrackComplete() {
         //if the endpoints of the last element equal the start points of the first element
@@ -124,11 +131,7 @@ public class TrackBuilder {
     
     //close the file I/O
     public void close() {
-        
-        
-        
-        
-        
+           
         try {
             csvr.close();
             csvw.close();
