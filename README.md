@@ -19,7 +19,7 @@ high priority goals
 medium priority goals
 -----
 
-make gui more useful (toolbar? zoom in/out? make it look nice and not broken?
+
 
 
 low priority goals
