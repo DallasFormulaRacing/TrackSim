@@ -195,10 +195,10 @@ public class SidePanel extends JPanel {
         curveRButton.addActionListener((ActionEvent e) -> {
             elementState = CURVE;
             radiusLabel.setText("Radius");
-            
+
             radiusSlider.setMinimum(0);
             radiusSlider.setMaximum(1000);
-            
+
             createElement();
             updateFields();
         });
@@ -206,10 +206,10 @@ public class SidePanel extends JPanel {
         straightRButton.addActionListener((ActionEvent e) -> {
             elementState = STRAIGHT;
             radiusLabel.setText("Length");
-            
+
             radiusSlider.setMinimum(-500);
             radiusSlider.setMaximum(500);
-            
+
             createElement();
             updateFields();
         });
@@ -269,8 +269,6 @@ public class SidePanel extends JPanel {
                 t.setExitTheta(tmpTheta);
 
             }
-            
-           
 
             TrackPanel.getInstance().addElement(t);
             TrackBuilder.getInstance().addElement(t);
@@ -283,41 +281,47 @@ public class SidePanel extends JPanel {
 
         this.add(new Spacer(this.getPreferredSize().width, 10, this.getBackground()));
 
+        
+        
         finishButton = new JButton();
         finishButton.setText("Finish");
         finishButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                TrackBuilder.getInstance().close();
-                
+              
+
                 TrackElement elementArr[] = TrackBuilder.getInstance().toArray();
-                
+
                 int index = 0;
-                
-                while(index < elementArr.length - 1){
-                    
+
+                while (index < elementArr.length - 1) {
+
                     //if we have a straight followed by a curve, calculate the braking distance in the straight
-                    if(elementArr[index].getType() == STRAIGHT && elementArr[index+1].getType() == CURVE){
-                        TrackElement curve = elementArr[index+1];
+                    if (elementArr[index].getType() == STRAIGHT && elementArr[index + 1].getType() == CURVE) {
+                        TrackElement curve = elementArr[index + 1];
                         TrackElement straight = elementArr[index];
                         
-                        straight.partitionLine(straight.getLine());
+                        double vFin = curve.getvNot();
+                        double vNot = straight.getvNot();
                         
-                        double vFinal = curve.getvFin();
-                        double vNot = straight.getvFin();
-                        System.out.println();
-                        System.out.println("braking distance: " + CarPhysics.getBrakingDistance(vFinal, vNot, straight));
-       
-                    }
-                    if(elementArr[index].getType() == CURVE){
+                        CarPhysics.getVelocity(vNot, vFin, straight);
                         
-                        Arc2D a = new Arc2D.Double();
+                        
+                    }else if (elementArr[index].getType() == CURVE && elementArr[index + 1].getType() == STRAIGHT) {
+                        TrackElement straight = elementArr[index + 1];
+                        TrackElement curve = elementArr[index];
+
+                        straight.setvNot(curve.getvFin());
                         
                     }
                     
+                    
+
                     index++;
                 }
                 
+                TrackBuilder.getInstance().close();
+
             }
         });
 
@@ -345,15 +349,14 @@ public class SidePanel extends JPanel {
         this.add(totalTimeLabel);
     }
 
+    //clarification: this creates the preview element (the green one that updates live)
     private void createElement() {
 
         double lastX = 0, lastY = 0, thisX, thisY, deltaX = 0, deltaY = 0, deltaTheta = 0;
         TrackElement lastElement;
 
         if (elementState == CURVE) {
-            
-            
-            
+
             if (isReversed == false) {
                 if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
                     t = new TrackElement(CURVE, 0, 0, 0, deltaAngle, radius);
@@ -363,7 +366,7 @@ public class SidePanel extends JPanel {
                             TrackBuilder.getInstance().getLastElement().getExitTheta(), deltaAngle, radius);
                 }
 
-            //if element is reversed          
+                //if element is reversed          
             } else {
                 if (TrackBuilder.getInstance().getAllElements().isEmpty()) {
                     t = new TrackElement(CURVE, 0, 0, 180, deltaAngle, radius);
@@ -397,11 +400,10 @@ public class SidePanel extends JPanel {
                                 90 - lastElement.getExitTheta() - deltaAngle, deltaAngle, radius);
 
                     }
-                    
+
                     //calculate delta between exit angles
                     deltaTheta = 180 - (t.getExitTheta() - lastElement.getExitTheta());
 
-                    
                     //calculate new track element with the correct angle of entry
                     if (Math.abs(lastElement.getExitTheta()) >= 0 && Math.abs(lastElement.getExitTheta()) < 90) {
 
@@ -415,23 +417,22 @@ public class SidePanel extends JPanel {
 
                     } else if (Math.abs(lastElement.getExitTheta()) > 180 && Math.abs(lastElement.getExitTheta()) < 270) {
 
-                        t = new TrackElement(CURVE, lastX , lastY ,
+                        t = new TrackElement(CURVE, lastX, lastY,
                                 270 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
 
                     } else if (Math.abs(lastElement.getExitTheta()) > 270 && Math.abs(lastElement.getExitTheta()) < 360) {
 
-                        t = new TrackElement(CURVE, lastX , lastY,
-                                90 - lastElement.getExitTheta() - deltaAngle + deltaTheta , deltaAngle, radius);
-                    }    
-                    
+                        t = new TrackElement(CURVE, lastX, lastY,
+                                90 - lastElement.getExitTheta() - deltaAngle + deltaTheta, deltaAngle, radius);
+                    }
+
                     //calculate delta between coordinates of this element and last element
                     thisY = t.getY1();
                     thisX = t.getX1();
 
                     deltaX = thisX - lastX;
                     deltaY = thisY - lastY;
-                    
-                    
+
                     //calculate final track element with proper angle and coordinates
                     if (Math.abs(lastElement.getExitTheta()) > 0 && Math.abs(lastElement.getExitTheta()) < 90) {
 
