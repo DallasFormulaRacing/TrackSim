@@ -3,7 +3,8 @@ Program to build and simulate a car going around a race track
 
 bugs
 ----
-
+  cannot start the track with a straight element
+  
   reverse elements don't work on certain angles of entry (180, 90, 270, 360)
     
   time can be negative (just make it an absolute value)
