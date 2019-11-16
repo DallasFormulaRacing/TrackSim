@@ -58,8 +58,8 @@ public class TrackElement {
      * This constructor is for curve elements only
      *
      * @param t element type (always CURVE for this constructor)
-     * @param x0 x coord OF THE BOUNDING BOX
-     * @param y0 y coord OF THE BOUNDING BOX
+     * @param x0 x coord of the bounding box
+     * @param y0 y coord of the bounding box
      * @param entryTheta angle that the turn begins at
      * @param dTheta angle of the turn itself
      * @param radius
@@ -217,6 +217,10 @@ public class TrackElement {
     public double getTime() {
         return time;
     }
+    
+    public void setTime(double t) {
+    	this.time = t;
+    }
 
     public double getvNot() {
         return vNot;
@@ -229,7 +233,7 @@ public class TrackElement {
     public double getvFin() {
         return vFin;
     }
-    
+
      public void setvFin(double vFin) {
         this.vFin = vFin;
     }

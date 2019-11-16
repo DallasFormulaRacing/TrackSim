@@ -30,7 +30,7 @@ public class InspectWindow extends JFrame {
         
         this.setTitle("TrackSim Inspect Element");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new Dimension(720, 960));
+        setPreferredSize(new Dimension(640,720));
         this.setResizable(false);
         
         JPanel panel = new JPanel(new BorderLayout());
@@ -40,15 +40,18 @@ public class InspectWindow extends JFrame {
         
         if(t.getType() == STRAIGHT){
             //create a table of appropriate length with headers
-            String[] header ={"displacement", "velocity", "vNot", "vFin"};
-            Object[][] tmparr = new Object[t.getPosition().size()][4];
+            String[] header ={"position", "velocity", "vNot", "vFin", "time"};
+            Object[][] tmparr = new Object[t.getPosition().size()][5];
             table = new JTable(tmparr, header);
-           
+            
 
             for(int i = 0; i < t.getPosition().size(); i++){
 
                 table.setValueAt(t.getPosition().get(i), i, 0);
                 table.setValueAt(t.getVelocity().get(i), i, 1);
+                table.setValueAt(t.getvNot(), i, 2);
+                table.setValueAt(t.getvFin(), i, 3);
+                table.setValueAt(t.getTime(), i, 4);
             }
 
         }else if(t.getType() == CURVE){

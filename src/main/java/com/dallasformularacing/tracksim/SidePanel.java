@@ -300,18 +300,17 @@ public class SidePanel extends JPanel {
                     if (elementArr[index].getType() == STRAIGHT && elementArr[index + 1].getType() == CURVE) {
                         TrackElement curve = elementArr[index + 1];
                         TrackElement straight = elementArr[index];
+                        straight.setvFin(curve.getvNot());
+                        CarPhysics.timeCal(straight, straight.getvNot(), straight.getvFin(),
+                        		straight.getLength(), CarPhysics.getAcc(), CarPhysics.getBraking());
                         
-                        double vFin = curve.getvNot();
-                        double vNot = straight.getvNot();
-                        
-                        CarPhysics.getVelocity(vNot, vFin, straight);
                         
                         
                     }else if (elementArr[index].getType() == CURVE && elementArr[index + 1].getType() == STRAIGHT) {
                         TrackElement straight = elementArr[index + 1];
                         TrackElement curve = elementArr[index];
-
                         straight.setvNot(curve.getvFin());
+                      
                         
                     }
                     
@@ -350,6 +349,7 @@ public class SidePanel extends JPanel {
     }
 
     //clarification: this creates the preview element (the green one that updates live)
+    //pls dont touch this code it works and i'm not sure how
     private void createElement() {
 
         double lastX = 0, lastY = 0, thisX, thisY, deltaX = 0, deltaY = 0, deltaTheta = 0;
